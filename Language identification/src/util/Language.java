@@ -15,7 +15,7 @@ public class Language {
     // ISO 639-3 language code name
     public String code;
 
-    public static final String UNKNOWN = "UNKNOWN";
+    public static final Language UNKNOWN = new Language("UNKNOWN");
     public static List<String> allNames;
     public static List<String> allCodes;
     private static boolean initialized = false;
@@ -39,11 +39,14 @@ public class Language {
         // TODO: Validate language string
     }
 
-    public Language() {
-        this(UNKNOWN);
-    }
-
     public String toString() {
         return name;
+    }
+
+    public boolean equals(Object obj) {
+        Language otherLang = (Language) obj;
+        if(otherLang == null)
+            return false;
+        return name.equals(otherLang.name);
     }
 }
