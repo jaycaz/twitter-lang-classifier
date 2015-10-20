@@ -3,9 +3,10 @@ package classifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class BaselineClassifier implements Classifier {
+
+public class BaselineClassifier extends Classifier {
 	HashMap<String, String> mostFrequentWords;
-	
+		
 	public void train(ArrayList<ArrayList<String>> trainingSentences) {
 		mostFrequentWords = new HashMap<String, String> ();
 	}
