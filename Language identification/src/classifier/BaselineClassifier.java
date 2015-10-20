@@ -11,7 +11,11 @@ public class BaselineClassifier implements Classifier {
 	}
 	
 	public String classify(ArrayList<String> sentence) {
-		 
+		for (String key: mostFrequentWords.keySet()) {
+			if (sentence.contains(mostFrequentWords.get(key))) {
+				return key;
+			}
+		}
 		return "unkown language";
 	}
 }
