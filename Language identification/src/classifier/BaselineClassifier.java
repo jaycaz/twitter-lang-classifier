@@ -10,8 +10,8 @@ public class BaselineClassifier implements Classifier {
 		mostFrequentWords = new HashMap<String, String> ();
 	}
 	
-	public int classify(ArrayList<String> sentence) {
-		
-		return 0;
+	public String classify(ArrayList<String> sentence) {
+		 
+		return "unkown language";
 	}
 }
