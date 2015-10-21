@@ -19,7 +19,12 @@ public class BaselineClassifier extends Classifier {
 			for(ArrayList<String> paragraph : trainingData.get(language)) {
 				for(String word : paragraph) {
 					// Add word to word counts
-					int newCount = wordCounts.getOrDefault(word, 0) + 1;
+					int newCount = 0;
+					if (wordCounts.containsKey(word)) {
+						newCount = wordCounts.get(word) + 1;
+					} else {
+						newCount = 1;
+					}
 					wordCounts.put(word, newCount);
 
 					// Check if word is current max
@@ -31,6 +36,7 @@ public class BaselineClassifier extends Classifier {
 			}
 
 			mostFrequentWords.put(language, maxWord);
+			System.out.println("Language: " + language + " max Word: " + maxWord);
 		}
 	}
 	

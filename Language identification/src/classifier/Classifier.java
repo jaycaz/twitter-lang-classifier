@@ -21,6 +21,6 @@ public abstract class Classifier {
 				total++;
 			}
 		}
-		return (1 - error) / (float) total;
+		return (total - error) / (float) total;
 	}
 }
