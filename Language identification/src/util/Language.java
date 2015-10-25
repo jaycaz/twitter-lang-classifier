@@ -1,13 +1,18 @@
 package util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.io.*;
+import java.nio.file.*;
 
 /* class util.Language
 
     Stores the language codes and plaintext language names
  */
 public class Language {
+    // The name of the file to open.
+    private static final Path filePath = Paths.get("Language Identification/data/language-table.txt");
 
     // Plaintext language name
     public String name;
@@ -15,38 +20,93 @@ public class Language {
     // ISO 639-3 language code name
     public String code;
 
-    public static final Language UNKNOWN = new Language("UNKNOWN");
+    public static final String UNKNOWN_STRING = "UNKNOWN";
+    public static final String UNKNOWN_CODE = "???";
+    public static final Language UNKNOWN = new Language(UNKNOWN_CODE, UNKNOWN_STRING);
     public static List<String> allNames;
     public static List<String> allCodes;
     private static boolean initialized = false;
 
     // Before using util.Language class, populate global lists of names/codes
-    private static void init() {
+    public static void init() {
+        if(initialized == true)
+            return;
         initialized = true;
 
-        // TODO: Read in names and codes
         allNames = new ArrayList<>();
         allCodes = new ArrayList<>();
+
+        String line = null;
+
+        try {
+            // Read in all language lines
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath.toString()));
+
+            // Extract language code and name
+            while((line = bufferedReader.readLine()) != null) {
+                int tab = line.indexOf('\t');
+                String code = line.substring(0, tab);
+                String name = line.substring(tab + 1);
+                allCodes.add(code);
+                allNames.add(name);
+            }
+
+            bufferedReader.close();
+        }
+        catch(FileNotFoundException ex) {
+            System.out.println(
+                    "Unable to open language code file '" +
+                            filePath.getFileName() + "'");
+            ex.printStackTrace();
+        }
+        catch(IOException ex) {
+            System.out.println(
+                    "Error reading language code file '"
+                            + filePath.getFileName() + "'");
+            ex.printStackTrace();
+        }
     }
 
-    public Language(String nm) {
+    public Language(String cd, String nm) {
+        code = cd;
+        name = nm;
+    }
+
+    public Language(String cd) throws Exception {
         if(!initialized)
             init();
 
-        name = nm;
-        code = nm; // TODO: Change to code
+        code = cd;
 
-        // TODO: Validate language string
+        // Find language name
+        int codeIndex = Collections.binarySearch(allCodes, code);
+        if(codeIndex < 0) {
+            throw new Exception("Error: Language '" + name + "' not found in language list.");
+        }
+
+        name = allNames.get(codeIndex);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public boolean isUnknown() {
+        return this.equals(Language.UNKNOWN);
     }
 
     public String toString() {
-        return name;
+        return "(" + name + ", " + code + ")";
     }
 
     public boolean equals(Object obj) {
         Language otherLang = (Language) obj;
         if(otherLang == null)
             return false;
-        return name.equals(otherLang.name);
+        return (name.equals(otherLang.name) && code.equals(otherLang.code));
     }
 }
