@@ -26,11 +26,12 @@ public class BaselineTest {
         System.out.println("Training...!");
         classifier.train(data);
         System.out.println("Finished Training. Now evaluating...!");
-        //classifier.accuracyByClass(data);
-        //System.out.println("Acccuracy: " + accuracy);
-        //double fscore = classifier.f1(data);
-        //System.out.println("F1: " + fscore);
-        classifier.f1ByClass(data);
+        classifier.accuracyByClass(data);
+        double accuracy = classifier.accuracy(data);
+        System.out.println("Acccuracy: " + accuracy);
+        double fscore = classifier.f1(data);
+        System.out.println("F1: " + fscore);
+        //classifier.f1ByClass(data);
         
     }
 }

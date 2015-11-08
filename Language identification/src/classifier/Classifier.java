@@ -42,7 +42,7 @@ public abstract class Classifier {
 			}
 			float accuracy = (total - error) / (float) total;
 			classAccuracy.add(new Pair(lang, accuracy));
-			System.out.println("Language:" + lang + ", Accuracy: " + accuracy);
+			System.out.println("Language:" + lang.getName() + ", Accuracy: " + accuracy);
 		}
 		return classAccuracy;
 	}
@@ -72,7 +72,7 @@ public abstract class Classifier {
 			}
 			double f1 = fscore.score(guesses, labels);
 			classF1.add(new Pair(lang, f1));
-			System.out.println("Language:" + lang + ", F1: " + f1);
+			System.out.println("Language:" + lang.getName() + ", F1: " + f1);
 		}
 		return classF1;
 	}

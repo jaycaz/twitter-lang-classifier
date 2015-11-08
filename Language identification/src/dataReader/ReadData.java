@@ -55,7 +55,7 @@ public class ReadData {
                     while(it.hasNext())
                     {
                         String tempword = it.next();
-                        System.out.println(tempword);
+                        //System.out.println(tempword);
                         //if the value is one of the invalid characters, remove
                         if(INVALID_CHARACTERS.contains(tempword)) {
                             words.remove(tempword);
