@@ -81,7 +81,7 @@ public class Language {
         // Find language name
         int codeIndex = Collections.binarySearch(allCodes, code);
         if(codeIndex < 0) {
-            throw new Exception("Error: Language '" + name + "' not found in language list.");
+            throw new Exception("Code for language name '" + name + "' could not be found");
         }
 
         name = allNames.get(codeIndex);
