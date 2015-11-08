@@ -33,8 +33,8 @@ public class Language {
             return;
         initialized = true;
 
-        allNames = new ArrayList<>();
-        allCodes = new ArrayList<>();
+        allNames = new ArrayList<String>();
+        allCodes = new ArrayList<String>();
 
         String line = null;
 
