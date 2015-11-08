@@ -36,7 +36,7 @@ public class BaselineClassifier extends Classifier {
 			}
 
 			mostFrequentWords.put(language, maxWord);
-			System.out.println("Language: " + language + " max Word: " + maxWord);
+			//System.out.println("Language: " + language + " max Word: " + maxWord);
 		}
 	}
 	

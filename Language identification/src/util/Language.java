@@ -12,7 +12,7 @@ import java.nio.file.*;
  */
 public class Language {
     // The name of the file to open.
-    private static final Path filePath = Paths.get("Language Identification/data/language-table.txt");
+    private static final Path filePath = Paths.get("data/language-table.txt");
 
     // Plaintext language name
     public String name;
