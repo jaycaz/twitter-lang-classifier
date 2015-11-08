@@ -12,7 +12,7 @@ public class BaselineClassifier extends Classifier {
 		mostFrequentWords = new HashMap<Language, String> ();
 
 		for(Language language : trainingData.keySet()) {
-			HashMap<String, Integer> wordCounts = new HashMap<>();
+			HashMap<String, Integer> wordCounts = new HashMap<String, Integer>();
 			String maxWord = "";
 			int maxCount = 0;
 
