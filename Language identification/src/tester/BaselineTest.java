@@ -7,9 +7,7 @@ import util.Language;
 import java.util.HashMap;
 
 import dataReader.ReadData;
-import edu.stanford.nlp.stats.MultiClassPrecisionRecallExtendedStats;
 import classifier.BaselineClassifier;
-import classifier.FrequencyClassifier;
 
 /** Baseline Tester
  *
@@ -34,7 +32,6 @@ public class BaselineTest {
         double fscore = classifier.f1(data);
         System.out.println("F1: " + fscore);
         //classifier.f1ByClass(data);
-        FrequencyClassifier fC = new FrequencyClassifier();
-        fC.train(data);
+        
     }
 }

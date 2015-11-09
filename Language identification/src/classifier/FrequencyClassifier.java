@@ -6,6 +6,7 @@ import java.util.List;
 
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
+import edu.stanford.nlp.stats.IntCounter;
 import util.Language;
 
 
@@ -18,7 +19,7 @@ public class FrequencyClassifier extends Classifier {
 		mostFrequentWords = new HashMap<Language, ArrayList<String>> ();
 
 		for(Language language : trainingData.keySet()) {
-			Counter<String> wordCounts = new Counter<String>();
+			IntCounter<String> wordCounts = new IntCounter<String>();
 
 			for(ArrayList<String> paragraph : trainingData.get(language)) {
 				for(String word : paragraph) {
@@ -27,18 +28,30 @@ public class FrequencyClassifier extends Classifier {
 				}
 			}
 			List<String> allWords = Counters.toSortedList(wordCounts);
-			ArrayList<String> topWords = new ArrayList<String>(allWords.subList(0, numWords));
-			mostFrequentWords.put(language, topWords);
+			if (allWords.size() >= numWords) {
+				ArrayList<String> topWords = new ArrayList<String>(allWords.subList(0, numWords));
+				mostFrequentWords.put(language, topWords);
+			} else {
+				mostFrequentWords.put(language, (ArrayList<String>) allWords);	
+			}
 			//System.out.println("Language: " + language + " max Word: " + maxWord);
 		}
 	}
 	
 	public Language classify(ArrayList<String> sentence) {
-		for (Language key: mostFrequentWords.keySet()) {
-			if (sentence.contains(mostFrequentWords.get(key))) {
-				return key;
+		IntCounter<Language> languageCounts = new IntCounter();
+		for (String word: sentence) {
+			for (Language lang: mostFrequentWords.keySet()) {
+				if (mostFrequentWords.get(lang).contains(word)) {
+					languageCounts.incrementCount(lang, 1);
+				}
 			}
 		}
-		return Language.UNKNOWN;
+		if (languageCounts.isEmpty()) {
+			return Language.UNKNOWN;
+		} else {
+			Language maxLang = Counters.toSortedList(languageCounts).get(0);
+			return maxLang;
+		}
 	}
 }
