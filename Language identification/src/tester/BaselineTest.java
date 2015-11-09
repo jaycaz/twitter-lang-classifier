@@ -21,7 +21,7 @@ public class BaselineTest {
     public static void main(String []args) {
         System.out.println("BaselineTest is active!");
         ReadData reader = new ReadData();
-        HashMap<Language, ArrayList<ArrayList<String>>> data = reader.getInputMap();
+        HashMap<Language, ArrayList<ArrayList<String>>> data = reader.getInputMap("_train");
         System.out.println("Read in Data!");
         BaselineClassifier classifier = new BaselineClassifier();
         System.out.println("Training...!");
@@ -29,6 +29,7 @@ public class BaselineTest {
         System.out.println("Finished Training. Now evaluating...!");
         classifier.accuracyByClass(data);
         double accuracy = classifier.accuracy(data);
+        //CHANGE TO TEST ON NEW DATA
         System.out.println("Acccuracy: " + accuracy);
         double fscore = classifier.f1(data);
         System.out.println("F1: " + fscore);
