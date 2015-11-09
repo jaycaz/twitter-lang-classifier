@@ -97,6 +97,7 @@ public class ReadData {
 
                     //for each line read , convert into word lists
                     if (num_paragraphs++ > maxParagraphs) break;
+
                     words = new ArrayList<String>(Arrays.asList(sCurrentLine.split(" ")));
 
                     CopyOnWriteArrayList<String> copy_words = new CopyOnWriteArrayList<String>(words);
