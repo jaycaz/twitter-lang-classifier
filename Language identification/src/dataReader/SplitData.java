@@ -15,7 +15,6 @@ public class SplitData {
 
     static final String Path = "data/";
     static final String extension = ".txt";
-    static int num_paragraphs = 0, maxParagraphs = 1000;
 
     public static void main(String []args) {
 
@@ -57,7 +56,6 @@ public class SplitData {
                 bw_test.close();
                 bw_train.close();
                 br.close();
-
             }
 
         } catch (Exception e) {

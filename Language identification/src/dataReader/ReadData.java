@@ -123,9 +123,7 @@ public class ReadData {
 
                         }
                     }
-
                     sentences.add(words);           // add to list of array lists
-
                 }
 
                 num_paragraphs = 0;
