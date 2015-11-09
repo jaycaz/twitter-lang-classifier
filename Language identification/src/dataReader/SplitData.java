@@ -15,7 +15,6 @@ public class SplitData {
     //static String[] filenames = {"abk"};
     static final String Path = "data/";
     static final String extension = ".txt";
-    static int num_paragraphs = 0, maxParagraphs = 1000;
 
     public static void main(String []args) {
 
@@ -41,10 +40,10 @@ public class SplitData {
                             bw_train.write(sCurrentLine);
                             break;
                         case 2:
-                            bw_test.write(sCurrentLine);
+                            bw_dev.write(sCurrentLine);
                             break;
                         case 3:
-                            bw_dev.write(sCurrentLine);
+                            bw_test.write(sCurrentLine);
                             break;
                     }
 
@@ -53,8 +52,7 @@ public class SplitData {
                 bw_dev.close();
                 bw_test.close();
                 bw_train.close();
-
-
+                br.close();
             }
 
         } catch (Exception e) {
