@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -18,6 +19,7 @@ public class SplitData {
 
     public static void main(String []args) {
 
+        int random_array[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2 ,2 , 3 , 3 , 3}; // array with 60, 25, 15 proability
 
         try {
 
@@ -25,40 +27,33 @@ public class SplitData {
                 //For Each File
                 BufferedReader br = new BufferedReader(new FileReader(Path + filenames[i] + extension));
 
-                int num_lines =  countLines(Path + filenames[i] + extension);
-                int train_num = (int)(num_lines*0.6);
-                int test_num = (int)(num_lines*0.85);
                 String sCurrentLine;
 
-                BufferedWriter bw = new BufferedWriter(new FileWriter(Path + filenames[i] + "_train" + extension));
-
+                BufferedWriter bw_train = new BufferedWriter(new FileWriter(Path + filenames[i] + "_train" + extension));
+                BufferedWriter bw_test = new BufferedWriter(new FileWriter(Path + filenames[i] + "_test" + extension));
+                BufferedWriter bw_dev = new BufferedWriter(new FileWriter(Path + filenames[i] + "_dev" + extension));
 
                 while ((sCurrentLine = br.readLine()) != null) {
 
-
-                    num_paragraphs++;
-                    if(num_paragraphs == train_num)
-                    {
-                        //Change to test data after 60% of paragraphs are read.
-                        bw.close();
-                        bw = new BufferedWriter(new FileWriter(Path + filenames[i] + "_test" + extension));
-
-                    }
-                    if (num_paragraphs == test_num)
-                    {
-                        //Change to dev data after 85% of paragraphs are read.
-                        bw.close();
-                        bw = new BufferedWriter(new FileWriter(Path + filenames[i] + "_dev" + extension));
+                    int rand_int = getRandom(random_array);
+                    switch(rand_int){
+                        case 1:
+                            bw_train.write(sCurrentLine);
+                            break;
+                        case 2:
+                            bw_test.write(sCurrentLine);
+                            break;
+                        case 3:
+                            bw_dev.write(sCurrentLine);
+                            break;
                     }
 
-                    bw.write(sCurrentLine);
 
                 }
-                bw.close();
+                bw_dev.close();
+                bw_test.close();
+                bw_train.close();
 
-
-
-                num_paragraphs = 0;
 
             }
 
@@ -92,6 +87,10 @@ public class SplitData {
         }
     }
 
+    public static int getRandom(int[] array) {
+        int rnd = new Random().nextInt(array.length);
+        return array[rnd];
+    }
 
 }
 
