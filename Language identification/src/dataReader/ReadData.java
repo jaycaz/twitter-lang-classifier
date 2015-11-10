@@ -6,10 +6,12 @@ package dataReader;
 import util.Language;
 
 import java.io.*;
+import java.io.BufferedReader;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.util.*;
+import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.ZipFile;
 
@@ -25,66 +27,97 @@ public class ReadData {
     static final String zipExtension = ".txt.zip";
     static int num_paragraphs = 0, maxParagraphs = 10000;
 
+    public static final String[] DATA_TYPES = {"_train", "_test", "_dev"};
+
+    /**
+     * Gets a BufferedReader pointing to open language file
+     * @param langCode The code for the language requested
+     * @param dataType One of the values {"_train", "_test", "_dev"} - this will be added to the filename being read
+     * @return open BufferedReader for language file, or null if an error occurred
+     */
+    private BufferedReader getLangReader(String langCode, String dataType) throws IllegalArgumentException {
+        if(!Arrays.asList(DATA_TYPES).contains(dataType)) {
+            throw new IllegalArgumentException("Invalid dataType '" + dataType + "', choices are " + Arrays.toString(DATA_TYPES));
+        }
+
+        // Look for .txt or .txt.zip files for language
+        String fileName = langCode + dataType + extension;
+        Path filePath = FileSystems.getDefault().getPath(path, fileName);
+        PathMatcher txtMatcher = FileSystems.getDefault().getPathMatcher("glob:" + filePath);
+
+        String zipFileName = langCode + dataType + zipExtension;
+        Path zipFilePath = FileSystems.getDefault().getPath(path, zipFileName);
+        PathMatcher zipMatcher = FileSystems.getDefault().getPathMatcher("glob:" + zipFilePath);
+
+
+        // Open .txt file if exists, otherwise look for .txt.zip and unzip
+        BufferedReader br = null;
+        if(txtMatcher.matches(filePath)) {
+            // .txt file found
+            try {
+                br = new BufferedReader(new FileReader(filePath.toString()));
+            }
+            catch (FileNotFoundException e) {
+                // TODO: This line may be unnecessary b/c the file is already being checked
+                System.out.println("Txt matcher found file " + fileName + ", but could not open");
+            }
+        }
+        else if (zipMatcher.matches(zipFilePath)) {
+            // no .txt file, look for .txt.zip
+            try {
+                ZipFile zip = new ZipFile(zipFilePath.toString());
+                InputStream input = zip.getInputStream(zip.getEntry(fileName));
+                br = new BufferedReader(new InputStreamReader(input));
+            }
+            catch (FileNotFoundException e) {
+                System.out.println("Zip matcher found file " + zipFileName + ", but could not open");
+                e.printStackTrace();
+            }
+            catch (IOException e) {
+                System.out.println("Could not retrieve entry '" + fileName + "' in zip file '" + zipFileName + "'");
+                e.printStackTrace();
+            }
+        }
+
+        return br;
+    }
+
+    /**
+     * Compiles all words in one language file
+     * @param langCode The language code to use
+     * @param dataType One of the values {"_train", "_test", "_dev"} - this will be added to the filename being read
+     * @return
+     */
+    public ArrayList<String> getInputLangWords(String langCode, String dataType) throws IOException {
+        BufferedReader br = getLangReader(langCode, dataType);
+        ArrayList<String> allWords = new ArrayList<String>();
+
+        if(br == null) {
+            throw new IOException("Language file for '" + langCode + dataType + "' could not be opened");
+        }
+
+        String line = null;
+        while((line = br.readLine()) != null) {
+            allWords.addAll(Arrays.asList(line.split("\\s")));
+        }
+        br.close();
+
+        return allWords;
+    }
+
+    /**
+     * Gets a list of sentences for each language
+     * @param dataType One of the values {"_train", "_test", "_dev"} - this will be added to the filename being read
+     * @return HashMap containing every sentence from every language document found
+     */
     public HashMap<Language, ArrayList<ArrayList<String>>> getInputMap(String dataType) {
-//INPUT: dataType: One of the values {"_train", "_test", "_dev"} - this will be added to the filename being read.
-
         HashMap<Language, ArrayList<ArrayList<String>>> hmap = new HashMap<Language, ArrayList<ArrayList<String>>>();
-        File f = new File(path);
-
-        PathMatcher txtMatcher = FileSystems.getDefault().getPathMatcher("glob:" + path + "*" + extension);
-        PathMatcher zipMatcher = FileSystems.getDefault().getPathMatcher("glob:" + path + "*" + zipExtension);
-
-        // Find all .txt files and all .txt.zip files in data/ directory
-        String[] tfiles = f.list((dir, name) -> {
-            return txtMatcher.matches(FileSystems.getDefault().getPath(dir.toString(), name));
-        });
-        String[] zfiles = f.list((dir, name) -> {
-            return zipMatcher.matches(FileSystems.getDefault().getPath(dir.toString(), name));
-        });
-        List<String> txtFiles = new ArrayList<String>(Arrays.asList(tfiles));
-        List<String> zipFiles = new ArrayList<String>(Arrays.asList(zfiles));
-        txtFiles.sort((s1, s2) -> s1.compareTo(s2));
-        zipFiles.sort((s1, s2) -> s1.compareTo(s2));
 
         for(String lang : filenames) {
-            String fileName = lang + dataType + extension;
-            Path filePath = FileSystems.getDefault().getPath(path, fileName);
-            String zipFileName = lang +dataType + zipExtension;
-            Path zipFilePath = FileSystems.getDefault().getPath(path, zipFileName);
-
-            // Open .txt file if exists, otherwise look for .txt.zip and unzip
-            BufferedReader br = null;
-            if(Collections.binarySearch(txtFiles, fileName) >= 0) {
-                // .txt file found
-                try {
-                    br = new BufferedReader(new FileReader(filePath.toString()));
-                    System.out.println(filePath + " found, reading");
-                }
-                catch (FileNotFoundException e) {
-                    // TODO: This line may be unnecessary b/c the file is already being checked
-                    System.out.println("Error: could not find file " + filePath);
-                }
-            }
-            else if (Collections.binarySearch(zipFiles, zipFileName) >= 0) {
-                // no .txt file, look for .txt.zip
-                try {
-                    ZipFile zip = new ZipFile(zipFilePath.toString());
-                    InputStream input = zip.getInputStream(zip.getEntry(fileName));
-                    br = new BufferedReader(new InputStreamReader(input));
-                    System.out.println(zipFileName + " found, reading");
-                }
-                catch (FileNotFoundException e) {
-                    System.out.println("Could not find file '" + zipFilePath.toString() + "'");
-                    e.printStackTrace();
-                }
-                catch (IOException e) {
-                    System.out.println("Could not retrieve entry '" + fileName + "' in zip file '" + zipFileName + "'");
-                    e.printStackTrace();
-                }
-            }
-            else {
-                // no .txt or .txt.zip
-                System.out.println("Language file for '" + lang + "' could not be found, skipping");
+            BufferedReader br = getLangReader(lang, dataType);
+            if (br == null) {
+                // no .txt or .txt.zip found
+                System.out.println("Language file for '" + lang + dataType + "' could not be opened, skipping");
                 continue;
             }
 
@@ -146,72 +179,23 @@ public class ReadData {
             }
         }
 
-
         return hmap;
     }
 
 
-    //Returns a hashmap of sentences and
+    /**
+     * Gets a hashmap of sentences for every language
+     */
     public HashMap<Language, ArrayList<String>> getInputSentences(String dataType) {
         //INPUT: dataType: One of the values {"_train", "_test", "_dev"} - this will be added to the filename being read.
-
         HashMap<Language, ArrayList<String>> hmap = new HashMap<Language, ArrayList<String>>();
-        File f = new File(path);
-
-        PathMatcher txtMatcher = FileSystems.getDefault().getPathMatcher("glob:" + path + "*" + extension);
-        PathMatcher zipMatcher = FileSystems.getDefault().getPathMatcher("glob:" + path + "*" + zipExtension);
-
-        // Find all .txt files and all .txt.zip files in data/ directory
-        String[] tfiles = f.list((dir, name) -> {
-            return txtMatcher.matches(FileSystems.getDefault().getPath(dir.toString(), name));
-        });
-        String[] zfiles = f.list((dir, name) -> {
-            return zipMatcher.matches(FileSystems.getDefault().getPath(dir.toString(), name));
-        });
-        List<String> txtFiles = new ArrayList<String>(Arrays.asList(tfiles));
-        List<String> zipFiles = new ArrayList<String>(Arrays.asList(zfiles));
-        txtFiles.sort((s1, s2) -> s1.compareTo(s2));
-        zipFiles.sort((s1, s2) -> s1.compareTo(s2));
 
         for(String lang : filenames) {
-            String fileName = lang + dataType + extension;
-            Path filePath = FileSystems.getDefault().getPath(path, fileName);
-            String zipFileName = lang +dataType + zipExtension;
-            Path zipFilePath = FileSystems.getDefault().getPath(path, zipFileName);
 
-            // Open .txt file if exists, otherwise look for .txt.zip and unzip
-            BufferedReader br = null;
-            if(Collections.binarySearch(txtFiles, fileName) >= 0) {
-                // .txt file found
-                try {
-                    br = new BufferedReader(new FileReader(filePath.toString()));
-                    System.out.println(filePath + " found, reading");
-                }
-                catch (FileNotFoundException e) {
-                    // TODO: This line may be unnecessary b/c the file is already being checked
-                    System.out.println("Error: could not find file " + filePath);
-                }
-            }
-            else if (Collections.binarySearch(zipFiles, zipFileName) >= 0) {
-                // no .txt file, look for .txt.zip
-                try {
-                    ZipFile zip = new ZipFile(zipFilePath.toString());
-                    InputStream input = zip.getInputStream(zip.getEntry(fileName));
-                    br = new BufferedReader(new InputStreamReader(input));
-                    System.out.println(zipFileName + " found, reading");
-                }
-                catch (FileNotFoundException e) {
-                    System.out.println("Could not find file '" + zipFilePath.toString() + "'");
-                    e.printStackTrace();
-                }
-                catch (IOException e) {
-                    System.out.println("Could not retrieve entry '" + fileName + "' in zip file '" + zipFileName + "'");
-                    e.printStackTrace();
-                }
-            }
-            else {
-                // no .txt or .txt.zip
-                System.out.println("Language file for '" + lang + "' could not be found, skipping");
+            BufferedReader br = getLangReader(lang, dataType);
+            if (br == null) {
+                // no .txt or .txt.zip found
+                System.out.println("Language file for '" + lang + dataType + "' could not be opened, skipping");
                 continue;
             }
 
