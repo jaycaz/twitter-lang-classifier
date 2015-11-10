@@ -13,7 +13,6 @@ public class ReadDataTest {
     @org.junit.Before
     public void setUp() throws Exception {
         reader = new ReadData();
-        System.out.println("_dev");
     }
 
     @org.junit.After
