@@ -215,7 +215,7 @@ public class ReadData {
                     String editSentence = "";
                     for (int cindex = 0; cindex < sCurrentLine.length(); cindex++) {
                         if (!INVALID_CHARACTERS.contains(String.valueOf(sCurrentLine.charAt(cindex)))) {
-                            editSentence += editSentence.charAt(cindex);
+                            editSentence += sCurrentLine.charAt(cindex);
 
                         }
                     }
