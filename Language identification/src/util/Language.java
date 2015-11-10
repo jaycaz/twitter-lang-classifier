@@ -23,9 +23,23 @@ public class Language {
     public static final String UNKNOWN_STRING = "UNKNOWN";
     public static final String UNKNOWN_CODE = "???";
     public static final Language UNKNOWN = new Language(UNKNOWN_CODE, UNKNOWN_STRING);
-    public static List<String> allNames;
-    public static List<String> allCodes;
+    private static List<String> allNames;
+    private static List<String> allCodes;
     private static boolean initialized = false;
+
+    public static List<String> getAllNames() {
+        if(!initialized) {
+            init();
+        }
+        return allNames;
+    }
+
+    public static List<String> getAllCodes() {
+        if(!initialized) {
+            init();
+        }
+        return allCodes;
+    }
 
     // Before using util.Language class, populate global lists of names/codes
     public static void init() {
