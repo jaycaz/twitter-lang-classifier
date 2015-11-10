@@ -76,6 +76,10 @@ public class Language {
         if(!initialized)
             init();
 
+        if(cd == null) {
+            throw new IllegalArgumentException("Illegal argument for language code: '" + cd + "'");
+        }
+
         code = cd;
 
         // Find language name
