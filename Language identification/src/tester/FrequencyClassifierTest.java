@@ -1,35 +1,27 @@
 package tester;
 
 import java.util.ArrayList;
-
-import util.Language;
-
 import java.util.HashMap;
 
+import util.Language;
+import classifier.FrequencyClassifier;
 import dataReader.ReadData;
-import classifier.BaselineClassifier;
 
-/** Baseline Tester
- *
- */
-public class BaselineTest {
-
-    public String dataPath = "";
-
-    public static void main(String []args) {
-        System.out.println("BaselineTest is active!");
-        ReadData reader = new ReadData();
-        HashMap<Language, ArrayList<ArrayList<String>>> TrainingData = reader.getInputMap("_train");
-        System.out.println("Read in Data!");
-        BaselineClassifier classifier = new BaselineClassifier();
-        System.out.println("Training...!");
-        classifier.train(TrainingData);
+public class FrequencyClassifierTest {
+	
+	public static void main(String []args) {
+		System.out.println("FrequencyClassifierTest is active!");
+	    ReadData reader = new ReadData();
+	    HashMap<Language, ArrayList<ArrayList<String>>> trainingData = reader.getInputMap("_train");
+	    System.out.println("Read in Data!");
+		FrequencyClassifier classifier = new FrequencyClassifier();
+	    System.out.println("Training...!");
+        classifier.train(trainingData);
         System.out.println("Finished Training. Now evaluating...!");
         //HashMap<Language, ArrayList<ArrayList<String>>> devData = reader.getInputMap("_dev");
         //classifier.accuracyByClass(devData);
         //double accuracy = classifier.accuracy(devData);
-        //CHANGE TO TEST ON NEW DATA
-        //System.out.println("Acccuracy on dev: " + accuracy);
+        //System.out.println("Acccuracy: " + accuracy);
         //double fscore = classifier.f1(devData);
         //System.out.println("F1: " + fscore);
         HashMap<Language, ArrayList<ArrayList<String>>> testData = reader.getInputMap("_test");
@@ -37,7 +29,5 @@ public class BaselineTest {
         System.out.println("Acccuracy on test: " + taccuracy);
         //double tfscore = classifier.f1(testData);
         //System.out.println("F1: " + tfscore);
-        //classifier.f1ByClass(data);
-        
-    }
+	}
 }

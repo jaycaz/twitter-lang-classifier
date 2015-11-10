@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -11,13 +12,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class SplitData {
     static String[] filenames = {"abk", "afr", "aka", "amh", "amu", "ara", "arg", "asm", "ast", "awa", "aym" ,"aze" ,"bam" ,"bel" ,"ben" ,"bih" ,"bis" ,"bos" ,"bpy" ,"bre" ,"bug" ,"bul" ,"cak" ,"cat" ,"cco" ,"ceb" ,"ces" ,"cha" ,"che" ,"cho" ,"chr" ,"chv" ,"ckb" ,"cor" ,"cos" ,"crh" ,"cym" ,"dan" ,"deu" ,"div" ,"dzo","ell" ,"eml" ,"eng" ,"epo" ,"est" ,"eus" ,"ewe" ,"fao" ,"fas" ,"fij" ,"fin" ,"fra" ,"frp" ,"fry" ,"ful" ,"gla" ,"gle" ,"glg" ,"glv" ,"grn" ,"guj" ,"hat" ,"hau" ,"haw" ,"heb" ,"her" ,"hil", "hin","hrv" ,"hun" ,"hye" ,"ibo" ,"iku" ,"ilo" ,"ind" ,"isl" ,"jac" ,"jav" ,"jpn" ,"kab" ,"kal" ,"kan" ,"kat" ,"kaz" ,"kek" ,"khm" ,"kik" ,"kin" ,"kir" ,"kom" ,"kor" ,"kur" ,"lad" ,"lao" ,"lat" ,"lav" ,"lez" ,"lij" ,"lin" ,"lit" ,"lmo" ,"ltz" ,"lug" ,"mal" ,"mam" ,"mar" ,"min" ,"mkd" ,"mlg" ,"mlt" ,"mon" ,"mri" ,"msa" ,"mus" ,"mya" ,"mzn" ,"nah" ,"nap" ,"nav" ,"ndo" ,"nds" ,"nep" ,"new" ,"nld" ,"nno" ,"nob" ,"nor" ,"nya" ,"oci" ,"ori" ,"orm" ,"pam" ,"pan" ,"pdc" ,"pdt" ,"pms" ,"pol" ,"por" ,"ppl" ,"pus" ,"quc" ,"que" ,"roh" ,"ron" ,"rus" ,"scn" ,"sco" ,"sin" ,"slk" ,"slv" ,"sme" ,"smo" ,"sna" ,"snd" ,"som" ,"spa" ,"sqi" ,"srd" ,"srp" ,"sun" ,"swa" ,"swe" ,"tah" ,"tam" ,"tat" ,"tel" ,"tgk" ,"tgl" ,"tha" ,"tir" ,"ton" ,"tpi" ,"tsn" ,"tum" ,"tur" ,"twi" ,"udm" ,"uig" ,"ukr" ,"urd" ,"usp" ,"uzb" ,"vec" ,"ven" ,"vie" ,"vol" ,"war" ,"wln" ,"wol" ,"xal" ,"xho" ,"yid" ,"yor" ,"zh-yue" ,"zha" ,"zho" ,"zul" };
-    //static String[] filenames = {"abk"};
+
     static final String Path = "data/";
     static final String extension = ".txt";
-    static int num_paragraphs = 0, maxParagraphs = 1000;
 
     public static void main(String []args) {
 
+        int random_array[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2 ,2 , 3 , 3 , 3}; // array with 60, 25, 15 proability
 
         try {
 
@@ -25,41 +26,36 @@ public class SplitData {
                 //For Each File
                 BufferedReader br = new BufferedReader(new FileReader(Path + filenames[i] + extension));
 
-                int num_lines =  countLines(Path + filenames[i] + extension);
-                int train_num = (int)(num_lines*0.6);
-                int test_num = (int)(num_lines*0.85);
                 String sCurrentLine;
 
-                BufferedWriter bw = new BufferedWriter(new FileWriter(Path + filenames[i] + "_train" + extension));
-
+                BufferedWriter bw_train = new BufferedWriter(new FileWriter(Path + filenames[i] + "_train" + extension));
+                BufferedWriter bw_test = new BufferedWriter(new FileWriter(Path + filenames[i] + "_test" + extension));
+                BufferedWriter bw_dev = new BufferedWriter(new FileWriter(Path + filenames[i] + "_dev" + extension));
 
                 while ((sCurrentLine = br.readLine()) != null) {
 
-
-                    num_paragraphs++;
-                    if(num_paragraphs == train_num)
-                    {
-                        //Change to test data after 60% of paragraphs are read.
-                        bw.close();
-                        bw = new BufferedWriter(new FileWriter(Path + filenames[i] + "_test" + extension));
-
+                    int rand_int = getRandom(random_array);
+                    switch(rand_int){
+                        case 1:
+                            bw_train.write(sCurrentLine);
+                            bw_train.write("\n");
+                            break;
+                        case 3:
+                            bw_test.write(sCurrentLine);
+                            bw_test.write("\n");
+                            break;
+                        case 2:
+                            bw_dev.write(sCurrentLine);
+                            bw_dev.write("\n");
+                            break;
                     }
-                    if (num_paragraphs == test_num)
-                    {
-                        //Change to dev data after 85% of paragraphs are read.
-                        bw.close();
-                        bw = new BufferedWriter(new FileWriter(Path + filenames[i] + "_dev" + extension));
-                    }
 
-                    bw.write(sCurrentLine);
 
                 }
-                bw.close();
-
-
-
-                num_paragraphs = 0;
-
+                bw_dev.close();
+                bw_test.close();
+                bw_train.close();
+                br.close();
             }
 
         } catch (Exception e) {
@@ -92,6 +88,10 @@ public class SplitData {
         }
     }
 
+    public static int getRandom(int[] array) {
+        int rnd = new Random().nextInt(array.length);
+        return array[rnd];
+    }
 
 }
 

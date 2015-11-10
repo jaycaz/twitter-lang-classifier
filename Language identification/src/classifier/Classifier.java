@@ -17,12 +17,16 @@ public abstract class Classifier {
 		int total = 0;
 		HashMap<String, Double> performance = new HashMap<String, Double>();
 		for (Language lang: testSentences.keySet()) {
+			System.out.println("Processing lang: " + lang);
+			int i = 0;
 			for (ArrayList<String> paragraph: testSentences.get(lang)) {
+				if (i > 100) continue;
 				Language guess = classify(paragraph);
 				if (!lang.equals(guess)) {
 					error++;
 				}
 				total++;
+				i++;
 			}
 		}
 		return (total - error) / (float) total;
