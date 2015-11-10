@@ -35,8 +35,8 @@ public class BaselineTest {
         HashMap<Language, ArrayList<ArrayList<String>>> testData = reader.getInputMap("_test");
         double taccuracy = classifier.accuracy(testData);
         System.out.println("Acccuracy on test: " + taccuracy);
-        double tfscore = classifier.f1(testData);
-        System.out.println("F1: " + tfscore);
+        //double tfscore = classifier.f1(testData);
+        //System.out.println("F1: " + tfscore);
         //classifier.f1ByClass(data);
         
     }
