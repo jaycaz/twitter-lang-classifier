@@ -23,7 +23,7 @@ public class ReadData {
     static final String path = "data/";
     static final String extension = ".txt";
     static final String zipExtension = ".txt.zip";
-    static int num_paragraphs = 0, maxParagraphs = 1000;
+    static int num_paragraphs = 0, maxParagraphs = 10000;
 
     public HashMap<Language, ArrayList<ArrayList<String>>> getInputMap(String dataType) {
 //INPUT: dataType: One of the values {"_train", "_test", "_dev"} - this will be added to the filename being read.
@@ -136,6 +136,98 @@ public class ReadData {
 
 
         return hmap;
+    }
+
+
+    //Returns a hashmap of sentences and
+    public HashMap<Language, ArrayList<String>> getInputSentences(String dataType) {
+        //INPUT: dataType: One of the values {"_train", "_test", "_dev"} - this will be added to the filename being read.
+
+        HashMap<Language, ArrayList<String>> hmap = new HashMap<Language, ArrayList<String>>();
+        File f = new File(path);
+
+        PathMatcher txtMatcher = FileSystems.getDefault().getPathMatcher("glob:" + path + "*" + extension);
+        PathMatcher zipMatcher = FileSystems.getDefault().getPathMatcher("glob:" + path + "*" + zipExtension);
+
+        // Find all .txt files and all .txt.zip files in data/ directory
+        String[] tfiles = f.list((dir, name) -> {
+            return txtMatcher.matches(FileSystems.getDefault().getPath(dir.toString(), name));
+        });
+        String[] zfiles = f.list((dir, name) -> {
+            return zipMatcher.matches(FileSystems.getDefault().getPath(dir.toString(), name));
+        });
+        List<String> txtFiles = new ArrayList<String>(Arrays.asList(tfiles));
+        List<String> zipFiles = new ArrayList<String>(Arrays.asList(zfiles));
+        txtFiles.sort((s1, s2) -> s1.compareTo(s2));
+        zipFiles.sort((s1, s2) -> s1.compareTo(s2));
+
+        for(String lang : filenames) {
+            String fileName = lang + dataType + extension;
+            Path filePath = FileSystems.getDefault().getPath(path, fileName);
+            String zipFileName = lang +dataType + zipExtension;
+            Path zipFilePath = FileSystems.getDefault().getPath(path, zipFileName);
+
+            // Open .txt file if exists, otherwise look for .txt.zip and unzip
+            BufferedReader br = null;
+            if(Collections.binarySearch(txtFiles, fileName) >= 0) {
+                // .txt file found
+                try {
+                    br = new BufferedReader(new FileReader(filePath.toString()));
+                    System.out.println(filePath + " found, reading");
+                }
+                catch (FileNotFoundException e) {
+                    // TODO: This line may be unnecessary b/c the file is already being checked
+                    System.out.println("Error: could not find file " + filePath);
+                }
+            }
+            else if (Collections.binarySearch(zipFiles, zipFileName) >= 0) {
+                // no .txt file, look for .txt.zip
+                try {
+                    ZipFile zip = new ZipFile(zipFilePath.toString());
+                    InputStream input = zip.getInputStream(zip.getEntry(fileName));
+                    br = new BufferedReader(new InputStreamReader(input));
+                    System.out.println(zipFileName + " found, reading");
+                }
+                catch (FileNotFoundException e) {
+                    System.out.println("Could not find file '" + zipFilePath.toString() + "'");
+                    e.printStackTrace();
+                }
+                catch (IOException e) {
+                    System.out.println("Could not retrieve entry '" + fileName + "' in zip file '" + zipFileName + "'");
+                    e.printStackTrace();
+                }
+            }
+            else {
+                // no .txt or .txt.zip
+                System.out.println("Language file for '" + lang + "' could not be found, skipping");
+                continue;
+            }
+
+            try {
+
+                String sCurrentLine;
+                ArrayList<String> sentences = new ArrayList<String>();
+
+                while ((sCurrentLine = br.readLine()) != null) {
+
+                    //for each line read
+                    if (num_paragraphs++ > maxParagraphs) break;
+                    sentences.add(sCurrentLine);           // Add to the list of sentences
+                }
+
+                num_paragraphs = 0;
+                hmap.put(new Language(lang), sentences);  // add to hash map
+                br.close();
+            } catch (Exception e) {
+                System.out.println(e.fillInStackTrace());
+            }
+        }
+
+
+        return hmap;
+
+
+
     }
 
 
