@@ -35,7 +35,7 @@ public class WordFrequencyFeature {
                 String tempword = it.next();
 
                 //if the value is one of the invalid characters, remove
-                if (INVALID_CHARACTERS.contains(tempword)) {
+                if (INVALID_CHARACTERS.contains(tempword) || tempword.matches("[0-9]+")) {
                     words.remove(tempword);
                 }
 
@@ -44,7 +44,7 @@ public class WordFrequencyFeature {
                     if (tempword.contains(String.valueOf(INVALID_CHARACTERS.charAt(k)))) {
                         ArrayList<String> temp_words = new ArrayList<String>(Arrays.asList(tempword.split(String.valueOf(INVALID_CHARACTERS.charAt(k)))));
                         for (int i = 0; i < temp_words.size(); i++) {
-                            if (!INVALID_CHARACTERS.contains(temp_words.get(i))) {
+                            if (!INVALID_CHARACTERS.contains(temp_words.get(i)) && !temp_words.get(i).matches("[0-9]+")) {
                                 words.add(temp_words.get(i));
                             }
                         }
