@@ -108,6 +108,17 @@ public class ReadData {
                         String tempword = it.next();
                         //System.out.println(tempword);
                         //if the value is one of the invalid characters, remove
+                        String editWord = "";
+                        for (int cindex = 0; cindex < tempword.length(); cindex++) {
+                            if (!INVALID_CHARACTERS.contains(String.valueOf(tempword.charAt(cindex)))) {
+                                editWord += tempword.charAt(cindex);
+                            }
+                        }
+                        words.remove(tempword);
+                        if(editWord != "") {
+                            words.add(editWord);
+                        }
+   /*
                         if (INVALID_CHARACTERS.contains(tempword)) {
                             words.remove(tempword);
 
@@ -121,7 +132,8 @@ public class ReadData {
                                 words.remove(tempword);
                             }
 
-                        }
+
+                        }   */
                     }
                     sentences.add(words);           // add to list of array lists
                 }
