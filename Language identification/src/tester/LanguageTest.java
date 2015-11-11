@@ -1,25 +1,64 @@
-package tester;
-
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import util.Language;
 
+import static org.junit.Assert.*;
+
 /**
- * LanguageTest: Test Language class
+ * Created by Jordan on 11/10/2015.
  */
 public class LanguageTest {
 
-    public static void main(String args[]) throws Exception {
-        System.out.println("Working Directory = " +
-                System.getProperty("user.dir"));
-        System.out.println("Initializing languages...");
+    Language lang;
+
+    @Before
+    public void setUp() throws Exception {
+    }
+
+    @After
+    public void tearDown() throws Exception {
+
+    }
+
+    @Test
+    public void testCreateLang() throws Exception {
+        Language french = new Language("fra", "French");
+        assertNotNull(french);
+    }
+
+    @Test
+    public void testInit() throws Exception {
         Language.init();
+        assertEquals(Language.nameOf("fra"), "French");
+    }
 
-        System.out.println("Creating language 'French'");
-        Language french = new Language("fra");
-        System.out.println(french);
-        System.out.println("Language successfully created!");
+    @Test
+    public void testGetName() throws Exception {
+        Language french = new Language("fra", "French");
+        assertEquals(french.getName(), "French");
+    }
 
-        System.out.println("Testing unknown language");
+    @Test
+    public void testUnknown() throws Exception {
         Language unk = Language.UNKNOWN;
-        System.out.println(unk);
+        assertEquals(unk.getName(), Language.UNKNOWN_STRING);
+        assertEquals(unk.getCode(), Language.UNKNOWN_CODE);
+    }
+
+    @Test
+    public void testGetCode() throws Exception {
+        Language french = new Language("fra");
+        assertEquals(french.getCode(), "fra");
+    }
+
+    @Test
+    public void testToString() throws Exception {
+
+    }
+
+    @Test
+    public void testEquals() throws Exception {
+
     }
 }

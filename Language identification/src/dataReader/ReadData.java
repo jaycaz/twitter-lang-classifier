@@ -158,7 +158,16 @@ public class ReadData {
             }
             catch (IOException e) {
                 // no .txt or .txt.zip found
-                System.out.println("Language file for '" + lang + dataType + "' could not be opened, skipping");
+                System.out.println("*** Language file for '" + lang + dataType + "' could not be opened, skipping");
+                continue;
+            }
+
+            Language langObj;
+            try {
+                langObj = new Language(lang);
+            }
+            catch (IllegalArgumentException e) {
+                System.out.println("*** Language code '" + lang + "' is invalid, skipping");
                 continue;
             }
 
@@ -216,7 +225,8 @@ public class ReadData {
                 num_paragraphs = 0;
                 hmap.put(new Language(lang), sentences);  // add to hash map
                 br.close();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 System.out.println(e.fillInStackTrace());
             }
         }
