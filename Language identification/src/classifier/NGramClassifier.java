@@ -1,20 +1,17 @@
 package classifier;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import edu.stanford.nlp.classify.Dataset;
 import edu.stanford.nlp.classify.GeneralDataset;
 import edu.stanford.nlp.classify.LinearClassifier;
 import edu.stanford.nlp.classify.LinearClassifierFactory;
-import edu.stanford.nlp.ling.BasicDatum;
-import edu.stanford.nlp.ling.Datum;
 import edu.stanford.nlp.ling.RVFDatum;
-import edu.stanford.nlp.stats.Counter;
-import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.IntCounter;
 import util.Language;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class NGramClassifier {
 
@@ -24,8 +21,7 @@ public class NGramClassifier {
 	int topCounts = 1000;
 	double minProb = 1/((double) topCounts * 100);
 	
-	public void train(
-			HashMap<Language, ArrayList<String>> trainingData) {
+	public void train(HashMap<Language, ArrayList<String>> trainingData) {
 		nGramProb = new HashMap<Language, ClassicCounter<String>>();
 		for(Language language : trainingData.keySet()) {
 			ClassicCounter<String> features = new ClassicCounter<String>(); 
@@ -138,7 +134,7 @@ public class NGramClassifier {
 			int i = 0;
 			for (String paragraph: testSentences.get(lang)) {
 				if (i > 100) continue;
-				Language guess = classifyByCounts(paragraph);
+                Language guess = classify(paragraph);
 				if (!lang.equals(guess)) {
 					error++;
 				}
