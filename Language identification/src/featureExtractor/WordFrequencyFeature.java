@@ -33,24 +33,17 @@ public class WordFrequencyFeature {
 
             while (it.hasNext()) {
                 String tempword = it.next();
-
+                //System.out.println(tempword);
                 //if the value is one of the invalid characters, remove
-                if (INVALID_CHARACTERS.contains(tempword) || tempword.matches("[0-9]+")) {
-                    words.remove(tempword);
-                }
-
-                for (int k = 0; k < INVALID_CHARACTERS.length(); k++) {
-                    //check if any of the invalid characters exist within the word; this can be changed to check for only for '.' and ','
-                    if (tempword.contains(String.valueOf(INVALID_CHARACTERS.charAt(k)))) {
-                        ArrayList<String> temp_words = new ArrayList<String>(Arrays.asList(tempword.split(String.valueOf(INVALID_CHARACTERS.charAt(k)))));
-                        for (int i = 0; i < temp_words.size(); i++) {
-                            if (!INVALID_CHARACTERS.contains(temp_words.get(i)) && !temp_words.get(i).matches("[0-9]+")) {
-                                words.add(temp_words.get(i));
-                            }
-                        }
-                        words.remove(tempword);
+                String editWord = "";
+                for (int cindex = 0; cindex < tempword.length(); cindex++) {
+                    if (!INVALID_CHARACTERS.contains(String.valueOf(tempword.charAt(cindex)))) {
+                        editWord += tempword.charAt(cindex);
                     }
-
+                }
+                words.remove(tempword);
+                if(editWord != "") {
+                    words.add(editWord);
                 }
             }
 

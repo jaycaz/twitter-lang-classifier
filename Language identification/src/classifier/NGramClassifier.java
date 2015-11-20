@@ -2,8 +2,8 @@ package classifier;
 
 import edu.stanford.nlp.classify.Dataset;
 import edu.stanford.nlp.classify.GeneralDataset;
-import edu.stanford.nlp.classify.LinearClassifier;
-import edu.stanford.nlp.classify.LinearClassifierFactory;
+import edu.stanford.nlp.classify.SVMLightClassifier;
+import edu.stanford.nlp.classify.SVMLightClassifierFactory;
 import edu.stanford.nlp.ling.RVFDatum;
 import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.stats.Counters;
@@ -15,13 +15,14 @@ import java.util.HashMap;
 
 public class NGramClassifier {
 
-	LinearClassifier<ClassicCounter<String>, Language> c;
+	SVMLightClassifier<ClassicCounter<String>, Language> c;
 	HashMap<Language, ClassicCounter<String>> nGramProb;
 	int nGram = 3;
 	int topCounts = 1000;
 	double minProb = 1/((double) topCounts * 100);
 	
-	public void train(HashMap<Language, ArrayList<String>> trainingData) {
+	public void train(
+			HashMap<Language, ArrayList<String>> trainingData) {
 		nGramProb = new HashMap<Language, ClassicCounter<String>>();
 		for(Language language : trainingData.keySet()) {
 			ClassicCounter<String> features = new ClassicCounter<String>(); 
@@ -29,7 +30,7 @@ public class NGramClassifier {
 				features = countNGrams(sentence, features);
 			}
 			Counters.retainTop(features, topCounts);
-			//Counters.normalize(features);
+			Counters.normalize(features);
 			nGramProb.put(language, features);
 		}
 	}
@@ -45,7 +46,7 @@ public class NGramClassifier {
 			RVFDatum<ClassicCounter<String>, Language> d = new RVFDatum(features, language);
 			dataSet.add(d);
 		}
-		LinearClassifierFactory<ClassicCounter<String>, Language> lcFactory = new LinearClassifierFactory<ClassicCounter<String>, Language>();
+		SVMLightClassifierFactory<ClassicCounter<String>, Language> lcFactory = new SVMLightClassifierFactory<ClassicCounter<String>, Language>();
 		c = lcFactory.trainClassifier(dataSet);
 	}
 	
@@ -64,11 +65,11 @@ public class NGramClassifier {
 	}
 	
 	public void writeToFile(String filename) {
-		LinearClassifier.writeClassifier(c, filename);
+		SVMLightClassifier.writeClassifier(c, filename);
 	}
 	
 	public void loadClassifier(String filename) {
-		c = LinearClassifier.readClassifier(filename);
+		c = SVMLightClassifier.readClassifier(filename);
 	}*/
 	
 	public Language classifyClassifier(String sentence) {
@@ -134,7 +135,7 @@ public class NGramClassifier {
 			int i = 0;
 			for (String paragraph: testSentences.get(lang)) {
 				if (i > 100) continue;
-                Language guess = classify(paragraph);
+				Language guess = classify(paragraph);
 				if (!lang.equals(guess)) {
 					error++;
 				}

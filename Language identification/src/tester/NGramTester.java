@@ -1,12 +1,11 @@
 package tester;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import util.Language;
-import classifier.BaselineClassifier;
 import classifier.NGramClassifier;
 import dataReader.ReadData;
+import util.Language;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class NGramTester {
 
@@ -20,6 +19,7 @@ public class NGramTester {
         NGramClassifier classifier = new NGramClassifier();
         System.out.println("Training...!");
         classifier.train(TrainingData);
+        TrainingData = null;
         //classifier.writeToFile("nGramClassifier");
         System.out.println("Finished Training. Now evaluating...!");
         //HashMap<Language, ArrayList<ArrayList<String>>> devData = reader.getInputMap("_dev");
