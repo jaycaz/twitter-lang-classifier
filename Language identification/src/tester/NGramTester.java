@@ -1,11 +1,13 @@
 package tester;
 
-import classifier.NGramClassifier;
-import dataReader.ReadData;
-import util.Language;
-
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import dataReader.TwitterDataSimulator;
+import util.Language;
+import classifier.BaselineClassifier;
+import classifier.NGramClassifier;
+import dataReader.ReadData;
 
 public class NGramTester {
 
@@ -19,9 +21,9 @@ public class NGramTester {
         NGramClassifier classifier = new NGramClassifier();
         System.out.println("Training...!");
         classifier.train(TrainingData);
-        TrainingData = null;
         //classifier.writeToFile("nGramClassifier");
         System.out.println("Finished Training. Now evaluating...!");
+        classifier.writeTopNFeaturesToFile("Top10NGrams.txt", 10);
         //HashMap<Language, ArrayList<ArrayList<String>>> devData = reader.getInputMap("_dev");
         //classifier.accuracyByClass(devData);
         //double accuracy = classifier.accuracy(devData);
@@ -29,7 +31,9 @@ public class NGramTester {
         //System.out.println("Acccuracy on dev: " + accuracy);
         //double fscore = classifier.f1(devData);
         //System.out.println("F1: " + fscore);
-        HashMap<Language, ArrayList<String>> testData = reader.getInputSentences("_test");
+        //HashMap<Language, ArrayList<String>> testData = reader.getInputSentences("_test");
+        TwitterDataSimulator twitterSim = new TwitterDataSimulator();
+        HashMap<Language, ArrayList<String>> testData = twitterSim.getTestingData(5, 10);
         double taccuracy = classifier.accuracy(testData);
         System.out.println("Acccuracy on test: " + taccuracy);
         //double tfscore = classifier.f1(testData);
