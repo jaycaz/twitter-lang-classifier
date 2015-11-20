@@ -1,13 +1,12 @@
 package classifier;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.IntCounter;
 import util.Language;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 public class FrequencyClassifier extends Classifier {
