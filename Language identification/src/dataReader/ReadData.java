@@ -6,13 +6,13 @@ package dataReader;
 import util.Language;
 
 import java.io.*;
-import java.io.BufferedReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.util.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.ZipFile;
 
@@ -21,11 +21,12 @@ public class ReadData {
 
     static String[] filenames = {"abk", "afr", "aka", "amh", "amu", "ara", "arg", "asm", "ast", "awa", "aym" ,"aze" ,"bam" ,"bel" ,"ben" ,"bih" ,"bis" ,"bos" ,"bpy" ,"bre" ,"bug" ,"bul" ,"cak" ,"cat" ,"cco" ,"ceb" ,"ces" ,"cha" ,"che" ,"cho" ,"chr" ,"chv" ,"ckb" ,"cor" ,"cos" ,"crh" ,"cym" ,"dan" ,"deu" ,"div" ,"dzo","ell" ,"eml" ,"eng" ,"epo" ,"est" ,"eus" ,"ewe" ,"fao" ,"fas" ,"fij" ,"fin" ,"fra" ,"frp" ,"fry" ,"ful" ,"gla" ,"gle" ,"glg" ,"glv" ,"grn" ,"guj" ,"hat" ,"hau" ,"haw" ,"heb" ,"her" ,"hil", "hin","hrv" ,"hun" ,"hye" ,"ibo" ,"iku" ,"ilo" ,"ind" ,"isl" ,"jac" ,"jav" ,"jpn" ,"kab" ,"kal" ,"kan" ,"kat" ,"kaz" ,"kek" ,"khm" ,"kik" ,"kin" ,"kir" ,"kom" ,"kor" ,"kur" ,"lad" ,"lao" ,"lat" ,"lav" ,"lez" ,"lij" ,"lin" ,"lit" ,"lmo" ,"ltz" ,"lug" ,"mal" ,"mam" ,"mar" ,"min" ,"mkd" ,"mlg" ,"mlt" ,"mon" ,"mri" ,"msa" ,"mus" ,"mya" ,"mzn" ,"nah" ,"nap" ,"nav" ,"ndo" ,"nds" ,"nep" ,"new" ,"nld" ,"nno" ,"nob" ,"nor" ,"nya" ,"oci" ,"ori" ,"orm" ,"pam" ,"pan" ,"pdc" ,"pdt" ,"pms" ,"pol" ,"por" ,"ppl" ,"pus" ,"quc" ,"que" ,"roh" ,"ron" ,"rus" ,"scn" ,"sco" ,"sin" ,"slk" ,"slv" ,"sme" ,"smo" ,"sna" ,"snd" ,"som" ,"spa" ,"sqi" ,"srd" ,"srp" ,"sun" ,"swa" ,"swe" ,"tah" ,"tam" ,"tat" ,"tel" ,"tgk" ,"tgl" ,"tha" ,"tir" ,"ton" ,"tpi" ,"tsn" ,"tum" ,"tur" ,"twi" ,"udm" ,"uig" ,"ukr" ,"urd" ,"usp" ,"uzb" ,"vec" ,"ven" ,"vie" ,"vol" ,"war" ,"wln" ,"wol" ,"xal" ,"xho" ,"yid" ,"yor" ,"zh-yue" ,"zha" ,"zho" ,"zul" };
 
-    static final String INVALID_CHARACTERS = ".,;:!%-0123456789'";
-    static final String DATA_PATH = "data/";
-    static final String EXTENSION = ".txt";
-    static final String ZIP_EXTENSION = ".txt.zip";
-    static int num_paragraphs = 0, maxParagraphs = 100;
+    static final String INVALID_CHARACTERS = ".,;:!%- 0123456789'";
+    public static final String DATA_PATH = "Language Identification/data/";
+    //public static final String DATA_PATH = "data/";
+    public static final String EXTENSION = ".txt";
+    public static final String ZIP_EXTENSION = ".txt.zip";
+    static int num_paragraphs = 0, maxParagraphs = 10000;
 
     public static final String TRAIN = "_train";
     public static final String TEST = "_test";
@@ -294,5 +295,63 @@ public class ReadData {
 
     }
 
+
+    public HashMap<Language, ArrayList<String>> getLanguageData(String dataType, String lang) {
+        //INPUT: dataType: One of the values {"_train", "_test", "_dev"} - this will be added to the filename being read.
+        HashMap<Language, ArrayList<String>> hmap = new HashMap<Language, ArrayList<String>>();
+
+
+
+        BufferedReader br;
+        try {
+            br = getLangReader(lang, dataType);
+        }
+        catch (IOException e) {
+            // no .txt or .txt.zip found
+            System.out.println("Language file for '" + lang + dataType + "' could not be opened, returning null");
+            return null;
+        }
+
+        try {
+
+            String sCurrentLine;
+            ArrayList<String> sentences = new ArrayList<String>();
+
+            while ((sCurrentLine = br.readLine()) != null) {
+
+                //for each line read
+                if (num_paragraphs++ > maxParagraphs) break;
+
+                String tempsentence = sCurrentLine;
+                //if the value is one of the invalid characters, remove
+                String editSentence = "";
+                for (int cindex = 0; cindex < sCurrentLine.length(); cindex++) {
+                    if (!INVALID_CHARACTERS.contains(String.valueOf(sCurrentLine.charAt(cindex)))) {
+                        editSentence += sCurrentLine.charAt(cindex);
+
+                    }
+                }
+
+                if(editSentence != "") {
+                    sentences.add(editSentence);           // Add to the list of sentences
+                }
+            }
+
+
+
+            num_paragraphs = 0;
+            hmap.put(new Language(lang), sentences);  // add to hash map
+            br.close();
+        } catch (Exception e) {
+            System.out.println(e.fillInStackTrace());
+        }
+
+
+
+    return hmap;
+
+
+
+}
 
 }
