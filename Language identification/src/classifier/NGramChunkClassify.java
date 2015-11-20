@@ -40,22 +40,26 @@ public class NGramChunkClassify {
             //Counters.retainTop(features, topCounts);
             //Counters.normalize(features);
             System.out.println(nGramProb.containsKey(language));
+            boolean present = false;
             for(Language key: nGramProb.keySet() )
             {
                 System.out.println("IN ITERATOR: " + key);
                 if(key.equals(language)){
-                    ClassicCounter<String> tempCounter = new ClassicCounter<String>(nGramProb.get(language));
+                    ClassicCounter<String> tempCounter = new ClassicCounter<String>(nGramProb.get(key));
                     tempCounter.addAll(features);
                     nGramProb.remove(language);
                     nGramProb.put(language, tempCounter);
                     System.out.println("Feature len: " + tempCounter.size() );
-                    System.out.println("Feature len: " + nGramProb.get(language).size() );
+                    System.out.println("Feature len: .. " + nGramProb.get(language).size() );
+                    present = true;
 
                 }
             }
+            if(!present) {
+                nGramProb.put(language, features);
+                System.out.println("Feature len: .. " + nGramProb.get(language).size() );
+            }
 
-            nGramProb.put(language, features);
-            System.out.println("Feature len: " + nGramProb.get(language).size());
         }
     }
 
