@@ -320,7 +320,7 @@ public class ReadData {
             while ((sCurrentLine = br.readLine()) != null) {
 
                 //for each line read
-                if (num_paragraphs++ > maxParagraphs) break;
+              //  if (num_paragraphs++ > maxParagraphs) break;
 
                 String tempsentence = sCurrentLine;
                 //if the value is one of the invalid characters, remove
@@ -354,4 +354,55 @@ public class ReadData {
 
 }
 
+    private BufferedReader br_chunk;
+    public HashMap<Language, ArrayList<String>> getNextChunk(String dataType, String language) {
+        HashMap<Language, ArrayList<String>> hmap = new HashMap<Language, ArrayList<String>>();
+        int max = 500;
+
+        try {
+            if(br_chunk == null)
+                br_chunk = getLangReader(language, dataType);
+        }
+        catch (IOException e) {
+            // no .txt or .txt.zip found
+            System.out.println("Language file for '" + language + dataType + "' could not be opened, returning null");
+            return null;
+        }
+
+        try {
+            String sCurrentLine;
+            ArrayList<String> sentences = new ArrayList<String>();
+            int count = 0;
+            while ((sCurrentLine = br_chunk.readLine()) != null && count++ < max) {
+                String tempsentence = sCurrentLine;
+                //if the value is one of the invalid characters, remove
+                String editSentence = "";
+                for (int cindex = 0; cindex < sCurrentLine.length(); cindex++) {
+                    if (!INVALID_CHARACTERS.contains(String.valueOf(sCurrentLine.charAt(cindex)))) {
+                        editSentence += sCurrentLine.charAt(cindex);
+
+                    }
+                }
+
+                if(editSentence != "") {
+                    sentences.add(editSentence);           // Add to the list of sentences
+                }
+            }
+            System.out.println("read: " + sentences.size());
+            hmap.put(new Language(language), sentences);  // add to hash map
+            if(sCurrentLine == null && sentences.size() == 0) {
+                br_chunk.close();
+                br_chunk = null;
+                return null;
+            }
+
+        }
+        catch(IOException e){
+            System.out.println(e.fillInStackTrace());
+        }
+
+
+
+        return hmap;
+    }
 }
