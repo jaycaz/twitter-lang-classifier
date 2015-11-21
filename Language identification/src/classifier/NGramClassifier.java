@@ -16,7 +16,7 @@ import edu.stanford.nlp.stats.IntCounter;
 import featureExtractor.NGramFeatures;
 import util.Language;
 
-public class NGramClassifier {
+public class NGramClassifier extends Classifier {
 	HashMap<Language, ClassicCounter<String>> nGramProb;
 	NGramFeatures nGramExtractor;
 	int nGramMax = 4;
@@ -29,7 +29,7 @@ public class NGramClassifier {
 			HashMap<Language, ArrayList<String>> trainingData) {
 		nGramProb = new HashMap<Language, ClassicCounter<String>>();
 		nGramExtractor = new NGramFeatures();
-		for(Language language : trainingData.keySet()) {
+		for(Language language: trainingData.keySet()) {
 			ClassicCounter<String> features = new ClassicCounter<String>(); 
 			for (String sentence: trainingData.get(language)) {
 				features = nGramExtractor.getFeatures(sentence, features, nGramMin, nGramMax);
@@ -84,28 +84,28 @@ public class NGramClassifier {
 			return maxLang;
 		}
 	}
+
 	
-	
-	public double accuracy(HashMap<Language, ArrayList<String>> testSentences) {
-		int error = 0;
-		int total = 0;
-		HashMap<String, Double> performance = new HashMap<String, Double>();
-		for (Language lang: testSentences.keySet()) {
-			System.out.println("Processing lang: " + lang);
-			int i = 0;
-			for (String paragraph: testSentences.get(lang)) {
-				if (i > 1000) continue;
-				Language guess = classify(paragraph);
-				if (!lang.equals(guess)) {
-					error++;
+	public void writeTopNFeaturesToFileLatex(String filename, int n) {
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+			for (Language lang: nGramProb.keySet()) {
+				ClassicCounter<String> counts = nGramProb.get(lang);
+				ClassicCounter<String> countsTop10 = new ClassicCounter<String>(counts);
+				Counters.retainTop(countsTop10, n);
+				String words = lang.getName() + " & ";
+				for (String s: countsTop10) {
+					words = words + s + " & ";
 				}
-				total++;
-				i++;
+				if (words.length() > 2) words = words.substring(0, words.length() - 2);
+				writer.write(words + "\\\\ \n\n");
 			}
+			writer.close();
+		} catch (Exception e) {
+			System.out.println(e.fillInStackTrace());
 		}
-		return (total - error) / (float) total;
 	}
-	
+
 	public void writeTopNFeaturesToFile(String filename, int n) {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
@@ -142,5 +142,7 @@ public class NGramClassifier {
 			System.out.println(e.fillInStackTrace());
 		}
 	}
+
+
 
 }

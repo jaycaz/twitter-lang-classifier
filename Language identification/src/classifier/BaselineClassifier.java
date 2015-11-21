@@ -8,7 +8,7 @@ public class BaselineClassifier extends Classifier {
 	HashMap<Language, String> mostFrequentWords;
 
 	// Find most frequent word for every language
-	public void train(HashMap<Language, ArrayList<ArrayList<String>>> trainingData) {
+	public void train(HashMap<Language, ArrayList<String>> trainingData) {
 		mostFrequentWords = new HashMap<Language, String> ();
 
 		for(Language language : trainingData.keySet()) {
@@ -16,8 +16,8 @@ public class BaselineClassifier extends Classifier {
 			String maxWord = "";
 			int maxCount = 0;
 
-			for(ArrayList<String> paragraph : trainingData.get(language)) {
-				for(String word : paragraph) {
+			for(String paragraph : trainingData.get(language)) {
+				for(String word : paragraph.split(" ")) {
 					// Add word to word counts
 					int newCount = 0;
 					if (wordCounts.containsKey(word)) {
@@ -34,13 +34,12 @@ public class BaselineClassifier extends Classifier {
 					}
 				}
 			}
-
 			mostFrequentWords.put(language, maxWord);
-			//System.out.println("Language: " + language + " max Word: " + maxWord);
+			System.out.println("Language: " + language + " max Word: " + maxWord);
 		}
 	}
 	
-	public Language classify(ArrayList<String> sentence) {
+	public Language classify(String sentence) {
 		for (Language key: mostFrequentWords.keySet()) {
 			if (sentence.contains(mostFrequentWords.get(key))) {
 				return key;
