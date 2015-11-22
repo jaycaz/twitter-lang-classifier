@@ -5,11 +5,6 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import edu.stanford.nlp.classify.Dataset;
-import edu.stanford.nlp.classify.GeneralDataset;
-import edu.stanford.nlp.classify.LinearClassifier;
-import edu.stanford.nlp.classify.LinearClassifierFactory;
-import edu.stanford.nlp.ling.RVFDatum;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.stats.IntCounter;
