@@ -65,7 +65,6 @@ public class ReadData {
      * @param dataType One of the values {"_train", "_test", "_dev", ""} - this will be added to the filename being read
      * @return open BufferedReader for language file, or null if an error occurred
      */
-    // TODO: Change to BufferedInputStream
     public BufferedReader getLangReader(String langCode, String dataType) throws IllegalArgumentException, IOException {
         if(!Arrays.asList(DATA_TYPES).contains(dataType)) {
             throw new IllegalArgumentException("Invalid dataType '" + dataType + "', choices are " + Arrays.toString(DATA_TYPES));
