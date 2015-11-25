@@ -16,6 +16,12 @@ public class MapCreator {
 
     static final String INVALID_CHARACTERS = ".,;:!%#|{}()&^%$@?+=”•’»[]_*+\\/-\"…–—“„0123456789'";
 
+    /**
+     * Creates a unique map for characters
+     * @param path
+     * @param files
+     * @return
+     */
     public HashMap<Character, Integer> createUniqueCharacterMap (String path, String[] files) {
         IntCounter<Character> counter = new IntCounter<>();
         HashMap<Character, Integer> charMap = new HashMap<Character, Integer>();
