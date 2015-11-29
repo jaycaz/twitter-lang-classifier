@@ -12,13 +12,13 @@ import featureExtractor.NGramFeatures;
 import util.Language;
 
 public class NGramClassifier extends Classifier {
-	HashMap<Language, ClassicCounter<String>> nGramProb;
-	NGramFeatures nGramExtractor;
-	int nGramMax = 4;
-	int nGramMin = 4;
+	private HashMap<Language, ClassicCounter<String>> nGramProb;
+	private NGramFeatures nGramExtractor;
+	private int nGramMax = 4;
+	private int nGramMin = 2;
 	
-	int topCounts = 5000;
-	double minProb = 1/((double) topCounts * 1000);
+	private int topCounts = 5000;
+	private double minProb = 1/((double) topCounts * 1000);
 	
 	public void train(
 			HashMap<Language, ArrayList<String>> trainingData) {

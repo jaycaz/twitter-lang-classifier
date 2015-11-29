@@ -49,6 +49,29 @@ public class MapCreator {
         return charMap;
     }
 
+    public HashMap<Character, Integer> createUniqueCharacterMapFromFile (String filename) {
+        HashMap<Character, Integer> charMap = new HashMap<Character, Integer>();
+        try {
+            FileInputStream input = new FileInputStream(filename);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8));
+            String line = reader.readLine();
+            reader.readLine();
+            while((line = reader.readLine()) != null) {
+                char key = line.charAt(0);
+                int index = Integer.parseInt(line.substring(line.indexOf(",") + 2));
+                charMap.put(key, index);
+            }
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File " + filename + " not found.");
+            //throw e;
+        } catch (IOException e) {
+            System.out.println("IOException with file: " + filename);
+            //throw e;
+        }
+        return charMap;
+    }
+
     public void saveMapToFile(String filename, HashMap<Character, Integer> map) {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
