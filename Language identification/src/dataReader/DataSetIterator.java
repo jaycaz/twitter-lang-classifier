@@ -42,7 +42,8 @@ public class DataSetIterator {
         MapCreator createUniqueChars = new MapCreator();
         String[] filenames = new String[languages.length];
         for (int i = 0; i < languages.length; i++) filenames[i] = languages[i] + ".txt";
-        charToIndMap = createUniqueChars.createUniqueCharacterMap(FilePaths.DATA_PATH, filenames);
+//        charToIndMap = createUniqueChars.createUniqueCharacterMap(FilePaths.DATA_PATH, filenames);
+        charToIndMap = createUniqueChars.createUniqueCharacterMap(FilePaths.DATA_PATH, languages);
         uniqueChars = new char[charToIndMap.size()];
         for (char c: charToIndMap.keySet()) uniqueChars[charToIndMap.get(c)] = c;
         ReadData reader = new ReadData();

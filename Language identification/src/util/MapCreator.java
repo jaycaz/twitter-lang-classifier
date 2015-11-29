@@ -1,5 +1,6 @@
 package util;
 
+import dataReader.ReadData;
 import edu.stanford.nlp.stats.IntCounter;
 import edu.stanford.nlp.stats.Counters;
 import scala.Char;
@@ -27,8 +28,9 @@ public class MapCreator {
         HashMap<Character, Integer> charMap = new HashMap<Character, Integer>();
         for (String file: files) {
             try {
-                FileInputStream input = new FileInputStream(path + file);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8));
+//                FileInputStream input = new FileInputStream(path + file);
+//                BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8));
+                BufferedReader reader = ReadData.getLangReader(file);
                 String line = null;
                 while((line = reader.readLine()) != null) {
                     for (int i = 0; i < line.length(); i++) {

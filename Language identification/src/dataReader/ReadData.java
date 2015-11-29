@@ -55,7 +55,7 @@ public class ReadData {
 
 
     // TODO: Make all methods into static methods?
-    public BufferedReader getLangReader(String langCode) throws IllegalArgumentException, IOException {
+    public static BufferedReader getLangReader(String langCode) throws IllegalArgumentException, IOException {
         return getLangReader(langCode, "");
     }
 
@@ -65,7 +65,7 @@ public class ReadData {
      * @param dataType One of the values {"_train", "_test", "_dev", ""} - this will be added to the filename being read
      * @return open BufferedReader for language file, or null if an error occurred
      */
-    public BufferedReader getLangReader(String langCode, String dataType) throws IllegalArgumentException, IOException {
+    public static BufferedReader getLangReader(String langCode, String dataType) throws IllegalArgumentException, IOException {
         if(!Arrays.asList(DATA_TYPES).contains(dataType)) {
             throw new IllegalArgumentException("Invalid dataType '" + dataType + "', choices are " + Arrays.toString(DATA_TYPES));
         }
@@ -238,7 +238,7 @@ public class ReadData {
     /**
      * Gets a hashmap of sentences for every language
      */
-    public HashMap<Language, ArrayList<String>> getInputSentences(String dataType) {
+    public static HashMap<Language, ArrayList<String>> getInputSentences(String dataType) {
         //INPUT: dataType: One of the values {"_train", "_test", "_dev"} - this will be added to the filename being read.
         HashMap<Language, ArrayList<String>> hmap = new HashMap<Language, ArrayList<String>>();
 
