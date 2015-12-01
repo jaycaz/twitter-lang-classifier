@@ -100,8 +100,8 @@ public class RNN {
                 System.out.println("----- Sample " + j + " -----");
                 System.out.println(samples[j]);
             }*/
-            System.out.println("----- Accuracy " + ((float) error)/total + " -----");
-            //iter.reset();	//Reset iterator for another epoch
+            System.out.println("----- Error " + ((float) error)/total + " -----");
+            iter.reset();	//Reset iterator for another epoch
         }
         System.out.println("\n\nExample complete");
     }
@@ -113,47 +113,64 @@ public class RNN {
 
         String[] labels = new String[numSamples];
         String[] predicted = new String[numSamples];
+        String[] predicted1 = new String[numSamples];
+        //INDArray gold = Nd4j.zeros(new int[]{numSamples, iter.totalOutcomes(), charactersToSample});
+        //INDArray allOuts = Nd4j.zeros(new int[]{numSamples, iter.totalOutcomes(), charactersToSample};
+
         for (int i = 0; i < numSamples; i++) {
-            Pair<String, String> ex = iter.getRandomSentence();
+            Pair<String, String> ex = iter.getRandomSentence("train");
             labels[i] = ex.getFirst();
-            INDArray initializationInput = Nd4j.zeros(new int[]{1, iter.inputColumns(), ex.getSecond().length()});
-            INDArray gold = Nd4j.zeros(new int[]{1, iter.totalOutcomes(), ex.getSecond().length()});
-            int langInd = iter.getLanguageIndex(ex.getFirst());
-            for (int j = 0; j < ex.getSecond().length(); j++) {
-                int ind;
-                if (ex.getSecond().length() <= j) ind = iter.getCharIndex(' ');
-                else ind = iter.getCharIndex(ex.getSecond().charAt(j));
-                if (ind == -1) ind = iter.getCharIndex(' ');
-                initializationInput.putScalar(new int[]{0,ind,j}, 1.0);
-                gold.putScalar(new int[]{0,langInd,j}, 1.0);
-            }
+            INDArray input = iter.getFeatureVector(ex.getSecond(), ex.getSecond().length());
+
             net.rnnClearPreviousState();
-            INDArray output = net.rnnTimeStep(initializationInput);
+            INDArray output = net.rnnTimeStep(input);
+            //INDArray out1 = net.output(input);
+            INDArray out2 = output.tensorAlongDimension(output.size(2)-1,1,0);
+            //INDArray out3 = out1.tensorAlongDimension(out1.size(2)-1,1,0);
+            //gold.putRow(i, iter.getLanguageVector(ex.getFirst(), charactersToSample));
+            //allOuts.putRow(i, output);
             int maxInd = -1;
+            int maxInd2 = -1;
             double max = Double.MIN_VALUE;
+            double max2 = Double.MIN_VALUE;
             for (int k = 0; k < output.length(); k++) {
                 if (output.getDouble(k) > max) {
                     max = output.getDouble(k);
                     maxInd = k;
                 }
             }
+            for (int j = 0; j < out2.length(); j++) {
+                if (out2.getDouble(j) > max2) {
+                    max2 = out2.getDouble(j);
+                    maxInd2 = j;
+                }
+            }
             int index = maxInd/ex.getSecond().length();
             predicted[i] = iter.getLanguageByIndex(index);
+            predicted1[i] = iter.getLanguageByIndex(maxInd2);
         }
+        //Evaluation eval = new Evaluation();
+        //eval.eval(gold, allOuts);
+        //log.info(eval.stats());
 
         int locError = 0;
+        int locError2 = 0;
         int locTotal = 0;
         String[] out = new String[numSamples];
         for( int i=0; i<numSamples; i++ ) {
             out[i] = "True language: " + labels[i] + ", predicted: " + predicted[i];
             if (labels[i] != predicted[i]) {
-                error++;
                 locError++;
+                error++;
+            }
+            if (labels[i] != predicted1[i]) {
+                locError2++;
             }
             total++;
             locTotal++;
         }
-        System.out.println("----- current accuracy " + ((float) locError)/locTotal + " -----");
+        System.out.println("----- current error " + ((float) locError)/locTotal + " -----");
+        //System.out.println("----- current accuracy with last" + ((float) locError2)/locTotal + " -----");
         return out;
     }
 

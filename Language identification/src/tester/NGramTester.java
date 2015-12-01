@@ -1,9 +1,16 @@
 package tester;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import dataReader.TwitterDataSimulator;
+import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.Counters;
+import edu.stanford.nlp.util.Pair;
+import scala.Int;
 import util.Language;
 import classifier.BaselineClassifier;
 import classifier.NGramClassifier;
@@ -23,17 +30,14 @@ public class NGramTester {
         classifier.train(TrainingData);
         //classifier.writeToFile("nGramClassifier");
         System.out.println("Finished Training. Now evaluating...!");
-        //HashMap<Language, ArrayList<ArrayList<String>>> devData = reader.getInputMap("_dev");
-        //classifier.accuracyByClass(devData);
-        //double accuracy = classifier.accuracy(devData);
-        //CHANGE TO TEST ON NEW DATA
-        //System.out.println("Acccuracy on dev: " + accuracy);
-        //double fscore = classifier.f1(devData);
-        //System.out.println("F1: " + fscore);
-        //HashMap<Language, ArrayList<String>> testData = reader.getInputSentences("_test");
-        TwitterDataSimulator twitterSim = new TwitterDataSimulator();
-        HashMap<Language, ArrayList<String>> testData = twitterSim.getTestingData(5, 10);
-        classifier.writeScoresToFile("ScoresNGramLatex.txt", testData);
+
+        HashMap<Language, ArrayList<String>> testData = reader.getInputSentences("_test");
+        classifier.writeAccuracyByClassSortedToFile("AccuracyByClassSorted.txt", testData);
+        //TwitterDataSimulator twitterSim = new TwitterDataSimulator();
+        //HashMap<Language, ArrayList<String>> testData = twitterSim.getTestingData(5, 10);
+        //System.out.println("Accuracy: " + classifier.accuracy(testData));
+        //classifier.f1Acc(testData);
+        //classifier.writeScoresToFile("ScoresNGramLatex.txt", testData);
         //double taccuracy = classifier.accuracy(testData);
         //System.out.println("Acccuracy on test: " + taccuracy);
         //double tfscore = classifier.f1(testData);
