@@ -4,133 +4,113 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-import edu.stanford.nlp.math.DoubleAD;
 import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.stats.Counters;
-import edu.stanford.nlp.stats.MultiClassPrecisionRecallExtendedStats;
 import edu.stanford.nlp.util.Pair;
-import edu.stanford.nlp.util.Triple;
+import util.Evaluator;
 import util.Language;
 
 public abstract class Classifier {
 	public abstract void train(HashMap<Language, ArrayList<String>> trainingData);
 	public abstract Language classify(String sentence);
 
-
-	public double accuracy(HashMap<Language, ArrayList<String>> testSentences) {
-		int error = 0;
-		int total = 0;
-		HashMap<String, Double> performance = new HashMap<String, Double>();
+	/**
+	 * Given a set of test sentences, returns a list of true labels and a list of guesses
+	 *
+	 * @param testSentences
+	 * @return Pair of guesses, labels
+     */
+	private Pair<ArrayList<String>, ArrayList<String>> getGuessLabelLists(HashMap<Language, ArrayList<String>> testSentences) {
+		ArrayList<String> guesses = new ArrayList<>();
+		ArrayList<String> labels = new ArrayList<>();
 		for (Language lang: testSentences.keySet()) {
-			System.out.println("Processing lang: " + lang);
-			int i = 0;
 			for (String paragraph: testSentences.get(lang)) {
-				if (i > 1000) continue;
-				Language guess = classify(paragraph);
-				if (!lang.equals(guess)) {
-					error++;
-				}
-				total++;
-				i++;
+				labels.add(lang.getName());
+				guesses.add(classify(paragraph).getName());
 			}
 		}
-		return (total - error) / (float) total;
+		return new Pair<> (guesses, labels);
 	}
 
-	public ArrayList<Pair<Language, Double>> accuracyByClass(HashMap<Language, ArrayList<String>> testSentences) {
-		ArrayList<Pair<Language, Double>> classAccuracy = new ArrayList<Pair<Language, Double>>();
-		for (Language lang: testSentences.keySet()) {
-			int error = 0;
-			int total = 0;
-			for (String paragraph: testSentences.get(lang)) {
-				Language guess = classify(paragraph);
-				if (!lang.equals(guess)) {
-					error++;
-				}
-				total++;
-			}
-			float accuracy = (total - error) / (float) total;
-			classAccuracy.add(new Pair(lang, accuracy));
-			System.out.println("Language:" + lang.getName() + ", Accuracy: " + accuracy);
-		}
-		return classAccuracy;
+	public double accuracy(HashMap<Language, ArrayList<String>> testSentences) {
+		Evaluator eval = new Evaluator();
+		Pair<ArrayList<String>, ArrayList<String>> guessLabels = getGuessLabelLists(testSentences);
+		ArrayList<String> guesses = guessLabels.first();
+		ArrayList<String> labels = guessLabels.second();
+		return eval.accuracy(guesses.toArray(new String[guesses.size()]), labels.toArray(new String[labels.size()]));
+	}
+
+
+	public ClassicCounter<String> accuracyByClass(HashMap<Language, ArrayList<String>> testSentences) {
+		Evaluator eval = new Evaluator();
+		Pair<ArrayList<String>, ArrayList<String>> guessLabels = getGuessLabelLists(testSentences);
+		ArrayList<String> guesses = guessLabels.first();
+		ArrayList<String> labels = guessLabels.second();
+		return eval.accuracyByClass(guesses.toArray(new String[guesses.size()]), labels.toArray(new String[labels.size()]));
 	}
 
 	public double f1(HashMap<Language, ArrayList<String>> testSentences) {
-		MultiClassPrecisionRecallExtendedStats<Language> fscore = new MultiClassPrecisionRecallExtendedStats<Language>(null);
-		ArrayList<Language> guesses = new ArrayList<Language>();
-		ArrayList<Language> labels = new ArrayList<Language>();
-		for (Language lang: testSentences.keySet()) {
-			for (String paragraph: testSentences.get(lang)) {
-				guesses.add(classify(paragraph));
-				labels.add(lang);
-			}
-		}
-		return fscore.score(guesses, labels);
+		ClassicCounter<String> f1 = f1ByClass(testSentences);
+		return f1.getCount("total");
 	}
 
-	public ArrayList<Pair<Language, Double>> f1ByClass(HashMap<Language, ArrayList<String>> testSentences) {
-		MultiClassPrecisionRecallExtendedStats<Language> fscore = new MultiClassPrecisionRecallExtendedStats<Language>(null);
-		ArrayList<Pair<Language, Double>> classF1 = new ArrayList<Pair<Language, Double>>();
-		for (Language lang: testSentences.keySet()) {
-			ArrayList<Language> guesses = new ArrayList<Language>();
-			ArrayList<Language> labels = new ArrayList<Language>();
-			for (String paragraph: testSentences.get(lang)) {
-				guesses.add(classify(paragraph));
-				labels.add(lang);
-			}
-			double f1 = fscore.score(guesses, labels);
-			classF1.add(new Pair(lang, f1));
-			System.out.println("Language:" + lang.getName() + ", F1: " + f1);
-		}
-		return classF1;
+	public ClassicCounter<String> f1ByClass(HashMap<Language, ArrayList<String>> testSentences) {
+		Evaluator eval = new Evaluator();
+		Pair<ArrayList<String>, ArrayList<String>> guessLabels = getGuessLabelLists(testSentences);
+		ArrayList<String> guesses = guessLabels.first();
+		ArrayList<String> labels = guessLabels.second();
+		return eval.f1ByClass(guesses.toArray(new String[guesses.size()]), labels.toArray(new String[labels.size()]), false);
 	}
 
-	public Pair<Double, ArrayList<Pair<Language, Double>>> accuracyAndF1ByClass(HashMap<Language, ArrayList<String>> testSentences) {
-		ArrayList<Pair<Language, Pair<Double, Double>>> performance = new ArrayList<Pair<Language, Pair<Double, Double>>>();
-		int errorAll = 0;
-		int totalAll = 0;
-		for (Language lang: testSentences.keySet()) {
-			//System.out.println(lang);
-			//System.out.println(testSentences.get(lang));
-			int error = 0;
-			int total = 0;
-			int i = 0;
-			for (String paragraph: testSentences.get(lang)) {
-				i++;
-				if (i > 100) continue;
-				Language guess = classify(paragraph);
-				if (!lang.equals(guess)) {
-					error++;
-					errorAll++;
-				}
-				total++;
-				totalAll++;
-			}
-			float accuracy = (total - error) / (float) total;
-			if (Float.isNaN(accuracy)) {
-				System.out.println("NaN!! " + lang + " total: " + total + " error: " + error);
-			}
-			performance.add(new Pair(lang, accuracy));
+	public void f1Acc(HashMap<Language, ArrayList<String>> testSentences) {
+		ClassicCounter<String> f = f1ByClass(testSentences);
+		ClassicCounter<String> a = accuracyByClass(testSentences);
+		for (String lang: f.keySet()) {
+			System.out.println("F1 for lang: "+ lang + " = " + f.getCount(lang) + ", accuracy: " + a.getCount(lang));
 		}
-		double accuracyAll = (totalAll - errorAll) / (float) totalAll;
+	}
+
+	public Pair<Pair<Double, Double>, ArrayList<Pair<String, Pair<Double, Double>>>> accuracyAndF1ByClass(HashMap<Language, ArrayList<String>> testSentences) {
+		ArrayList<Pair<String, Pair<Double, Double>>> performance = new ArrayList<Pair<String, Pair<Double, Double>>>();
+		ClassicCounter<String> f1 = f1ByClass(testSentences);
+		ClassicCounter<String> acc = accuracyByClass(testSentences);
+		for (String lang: acc.keySet()) {
+			performance.add(new Pair<String, Pair<Double, Double>>(lang, new Pair<Double, Double>(acc.getCount(lang), f1.getCount(lang))));
+		}
+		double accuracyAll = accuracy(testSentences);
 		System.out.println("Total: Accuracy: " + accuracyAll);
-		return new Pair(accuracyAll, performance);
+		return new Pair(new Pair<Double, Double>(accuracyAll, f1.getCount("total")), performance);
 	}
 
 	public void writeScoresToFile(String filename, HashMap<Language, ArrayList<String>> testSentences) {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-			Pair<Double, ArrayList<Pair<Language, Double>>> scores = accuracyAndF1ByClass(testSentences);
-			writer.write(" & Accuracy \\\\ \n\n");
-			String line = "Total & " + scores.first() + " \\\\ \n\n";
+			Pair<Pair<Double, Double>, ArrayList<Pair<String, Pair<Double, Double>>>> scores = accuracyAndF1ByClass(testSentences);
+			writer.write(" & Accuracy & F1 \\\\ \n\n");
+			String line = "Total & " + scores.first().first() + " & " + scores.first().second() + " \\\\ \n\n";
 			writer.write(line);
-			for(Pair<Language, Double> score: scores.second()) {
-				String s = score.first().getName() + " & " + score.second() + "\\\\ \n\n";
+			for(Pair<String, Pair<Double, Double>> score: scores.second()) {
+				String s = score.first() + " & " + score.second().first() + " & " + score.second().second() + "\\\\ \n\n";
 				writer.write(s);
 			}
 			writer.close();
+		} catch (Exception e) {
+			System.out.println(e.fillInStackTrace());
+		}
+	}
+
+	public void writeAccuracyByClassSortedToFile (String filename, HashMap<Language, ArrayList<String>> testData) {
+		ClassicCounter<String> acc = accuracyByClass(testData);
+		List<Pair<String, Double>> list = Counters.toSortedListWithCounts(acc);
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(filename));
+			out.write("Language: Accuracy\n");
+			for(Pair<String, Double> p: list) {
+				out.write(p.first() + ": " + Double.toString(p.second()) + "\n");
+			}
+			out.close();
 		} catch (Exception e) {
 			System.out.println(e.fillInStackTrace());
 		}

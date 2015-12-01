@@ -138,6 +138,17 @@ public class NGramClassifier extends Classifier {
 		}
 	}
 
+	public void setNGram(int min, int max) {
+		nGramMin = min;
+		nGramMax = max;
+	}
 
+	public void setTopCounts (int top) {
+		topCounts = top;
+	}
+
+	public void reset() {
+		nGramProb.clear();
+	}
 
 }
