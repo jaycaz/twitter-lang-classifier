@@ -11,10 +11,15 @@ import java.util.Random;
  */
 public class TwitterDataSimulator {
 
+    HashMap<Language, ArrayList<String>> testData;
+
+    public TwitterDataSimulator() {
+        ReadData reader = new ReadData();
+        testData = reader.getInputSentences("_test");
+    }
+
     public HashMap<Language, ArrayList<String>> getTestingData(int minLength, int maxLength) {
         HashMap<Language, ArrayList<String>> shortSentences = new HashMap<Language, ArrayList<String>>();
-        ReadData reader = new ReadData();
-        HashMap<Language, ArrayList<String>> testData = reader.getInputSentences("_test");
         Random rn = new Random();
         for (Language lang: testData.keySet()) {
             ArrayList<String> newSentences = new ArrayList<String>();
