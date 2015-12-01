@@ -4,12 +4,12 @@ import org.apache.commons.math3.util.Pair;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.factory.Nd4j;
+import util.FilePaths;
 import util.Language;
 import util.MapCreator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.NoSuchElementException;
 import java.util.Random;
 
 /**
@@ -45,7 +45,8 @@ public class DataSetIterator {
         MapCreator createUniqueChars = new MapCreator();
         String[] filenames = new String[languages.length];
         for (int i = 0; i < languages.length; i++) filenames[i] = languages[i] + ".txt";
-        charToIndMap = createUniqueChars.createUniqueCharacterMap("data/", filenames);
+//        charToIndMap = createUniqueChars.createUniqueCharacterMap(FilePaths.DATA_PATH, filenames);
+        charToIndMap = createUniqueChars.createUniqueCharacterMap(FilePaths.DATA_PATH, languages);
         uniqueChars = new char[charToIndMap.size()];
         for (char c: charToIndMap.keySet()) uniqueChars[charToIndMap.get(c)] = c;
         ReadData reader = new ReadData();

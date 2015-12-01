@@ -3,6 +3,7 @@
  */
 package dataReader;
 
+import util.FilePaths;
 import util.Language;
 
 import java.io.*;
@@ -12,8 +13,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.ZipFile;
 
 
@@ -25,8 +24,7 @@ public class ReadData {
 
     //static final String INVALID_CHARACTERS = ".,;:!%-0123456789'";
     static final String INVALID_CHARACTERS = ".,;:!%#|{}()&^%$@?+=”•’»[]_*+\\/-\"…–—“„0123456789'";
-    //public static final String DATA_PATH = "Language Identification/data/";
-    public static final String DATA_PATH = "data/";
+    public static final String DATA_PATH = FilePaths.DATA_PATH;
     public static final String EXTENSION = ".txt";
     public static final String ZIP_EXTENSION = ".txt.zip";
     static int num_paragraphs = 0, maxParagraphs = 100;
@@ -58,7 +56,7 @@ public class ReadData {
 
 
     // TODO: Make all methods into static methods?
-    public BufferedReader getLangReader(String langCode) throws IllegalArgumentException, IOException {
+    public static BufferedReader getLangReader(String langCode) throws IllegalArgumentException, IOException {
         return getLangReader(langCode, "");
     }
 
@@ -68,7 +66,7 @@ public class ReadData {
      * @param dataType One of the values {"_train", "_test", "_dev", ""} - this will be added to the filename being read
      * @return open BufferedReader for language file, or null if an error occurred
      */
-    public BufferedReader getLangReader(String langCode, String dataType) throws IllegalArgumentException, IOException {
+    public static BufferedReader getLangReader(String langCode, String dataType) throws IllegalArgumentException, IOException {
         if(!Arrays.asList(DATA_TYPES).contains(dataType)) {
             throw new IllegalArgumentException("Invalid dataType '" + dataType + "', choices are " + Arrays.toString(DATA_TYPES));
         }
@@ -123,125 +121,125 @@ public class ReadData {
         return br;
     }
 
-    /**
-     * Compiles all words in one language file
-     * @param langCode The language code to use
-     * @param dataType One of the values {"_train", "_test", "_dev"} - this will be added to the filename being read
-     * @return
-     */
-    public ArrayList<String> getInputLangWords(String langCode, String dataType) throws IOException {
-        BufferedReader br = getLangReader(langCode, dataType);
-        ArrayList<String> allWords = new ArrayList<String>();
+//    /**
+//     * Compiles all words in one language file
+//     * @param langCode The language code to use
+//     * @param dataType One of the values {"_train", "_test", "_dev"} - this will be added to the filename being read
+//     * @return
+//     */
+//    public ArrayList<String> getInputLangWords(String langCode, String dataType) throws IOException {
+//        BufferedReader br = getLangReader(langCode, dataType);
+//        ArrayList<String> allWords = new ArrayList<String>();
+//
+//        if(br == null) {
+//            throw new IOException("Language file for '" + langCode + dataType + "' could not be opened");
+//        }
+//
+//        String line = null;
+//        while((line = br.readLine()) != null) {
+//            allWords.addAll(Arrays.asList(line.split("\\s")));
+//        }
+//        br.close();
+//
+//        return allWords;
+//    }
 
-        if(br == null) {
-            throw new IOException("Language file for '" + langCode + dataType + "' could not be opened");
-        }
-
-        String line = null;
-        while((line = br.readLine()) != null) {
-            allWords.addAll(Arrays.asList(line.split("\\s")));
-        }
-        br.close();
-
-        return allWords;
-    }
-
-    /**
-     * Gets a list of sentences for each language
-     * @param dataType One of the values {"_train", "_test", "_dev"} - this will be added to the filename being read
-     * @return HashMap containing every sentence from every language document found
-     */
-    public HashMap<Language, ArrayList<ArrayList<String>>> getInputMap(String dataType) {
-        HashMap<Language, ArrayList<ArrayList<String>>> hmap = new HashMap<Language, ArrayList<ArrayList<String>>>();
-
-        BufferedReader br;
-        for(String lang : filenames) {
-            try {
-                br = getLangReader(lang, dataType);
-            }
-            catch (IOException e) {
-                // no .txt or .txt.zip found
-                System.out.println("*** Language file for '" + lang + dataType + "' could not be opened, skipping");
-                continue;
-            }
-
-            Language langObj;
-            try {
-                langObj = new Language(lang);
-            }
-            catch (IllegalArgumentException e) {
-                System.out.println("*** Language code '" + lang + "' is invalid, skipping");
-                continue;
-            }
-
-            try {
-                ArrayList<String> words = null;
-                String sCurrentLine;
-                ArrayList<ArrayList<String>> sentences = new ArrayList<ArrayList<String>>();
-
-                while ((sCurrentLine = br.readLine()) != null) {
-
-                    //for each line read , convert into word lists
-                    if (num_paragraphs++ > maxParagraphs) break;
-
-                    words = new ArrayList<String>(Arrays.asList(sCurrentLine.split(" ")));
-
-                    CopyOnWriteArrayList<String> copy_words = new CopyOnWriteArrayList<String>(words);
-                    Iterator<String> it = copy_words.iterator();
-                    //pre-process the array list
-
-                    while (it.hasNext()) {
-                        String tempword = it.next();
-                        //System.out.println(tempword);
-                        //if the value is one of the invalid characters, remove
-                        String editWord = "";
-                        for (int cindex = 0; cindex < tempword.length(); cindex++) {
-                            if (!INVALID_CHARACTERS.contains(String.valueOf(tempword.charAt(cindex)))) {
-                                editWord += tempword.charAt(cindex);
-
-                            }
-                        }
-                        words.remove(tempword);
-                        if(editWord != "") {
-                            words.add(editWord);
-                        }
-   /*
-                        if (INVALID_CHARACTERS.contains(tempword)) {
-                            words.remove(tempword);
-
-                        }
-
-                        for (int k = 0; k < INVALID_CHARACTERS.length(); k++) {
-                            //check if any of the invalid characters exist within the word; this can be changed to check for only for '.' and ','
-                            if (tempword.contains(String.valueOf(INVALID_CHARACTERS.charAt(k)))) {
-                                ArrayList<String> temp_words = new ArrayList<String>(Arrays.asList(tempword.split(String.valueOf(INVALID_CHARACTERS.charAt(k)))));
-                                words.addAll(temp_words);
-                                words.remove(tempword);
-                            }
-
-
-                        }   */
-                    }
-                    sentences.add(words);           // add to list of array lists
-                }
-
-                num_paragraphs = 0;
-                hmap.put(new Language(lang), sentences);  // add to hash map
-                br.close();
-            }
-            catch (Exception e) {
-                System.out.println(e.fillInStackTrace());
-            }
-        }
-
-        return hmap;
-    }
+//    /**
+//     * Gets a list of sentences for each language
+//     * @param dataType One of the values {"_train", "_test", "_dev"} - this will be added to the filename being read
+//     * @return HashMap containing every sentence from every language document found
+//     */
+//    public HashMap<Language, ArrayList<ArrayList<String>>> getInputMap(String dataType) {
+//        HashMap<Language, ArrayList<ArrayList<String>>> hmap = new HashMap<Language, ArrayList<ArrayList<String>>>();
+//
+//        BufferedReader br;
+//        for(String lang : filenames) {
+//            try {
+//                br = getLangReader(lang, dataType);
+//            }
+//            catch (IOException e) {
+//                // no .txt or .txt.zip found
+//                System.out.println("*** Language file for '" + lang + dataType + "' could not be opened, skipping");
+//                continue;
+//            }
+//
+//            Language langObj;
+//            try {
+//                langObj = new Language(lang);
+//            }
+//            catch (IllegalArgumentException e) {
+//                System.out.println("*** Language code '" + lang + "' is invalid, skipping");
+//                continue;
+//            }
+//
+//            try {
+//                ArrayList<String> words = null;
+//                String sCurrentLine;
+//                ArrayList<ArrayList<String>> sentences = new ArrayList<ArrayList<String>>();
+//
+//                while ((sCurrentLine = br.readLine()) != null) {
+//
+//                    //for each line read , convert into word lists
+//                    if (num_paragraphs++ > maxParagraphs) break;
+//
+//                    words = new ArrayList<String>(Arrays.asList(sCurrentLine.split(" ")));
+//
+//                    CopyOnWriteArrayList<String> copy_words = new CopyOnWriteArrayList<String>(words);
+//                    Iterator<String> it = copy_words.iterator();
+//                    //pre-process the array list
+//
+//                    while (it.hasNext()) {
+//                        String tempword = it.next();
+//                        //System.out.println(tempword);
+//                        //if the value is one of the invalid characters, remove
+//                        String editWord = "";
+//                        for (int cindex = 0; cindex < tempword.length(); cindex++) {
+//                            if (!INVALID_CHARACTERS.contains(String.valueOf(tempword.charAt(cindex)))) {
+//                                editWord += tempword.charAt(cindex);
+//
+//                            }
+//                        }
+//                        words.remove(tempword);
+//                        if(editWord != "") {
+//                            words.add(editWord);
+//                        }
+//   /*
+//                        if (INVALID_CHARACTERS.contains(tempword)) {
+//                            words.remove(tempword);
+//
+//                        }
+//
+//                        for (int k = 0; k < INVALID_CHARACTERS.length(); k++) {
+//                            //check if any of the invalid characters exist within the word; this can be changed to check for only for '.' and ','
+//                            if (tempword.contains(String.valueOf(INVALID_CHARACTERS.charAt(k)))) {
+//                                ArrayList<String> temp_words = new ArrayList<String>(Arrays.asList(tempword.split(String.valueOf(INVALID_CHARACTERS.charAt(k)))));
+//                                words.addAll(temp_words);
+//                                words.remove(tempword);
+//                            }
+//
+//
+//                        }   */
+//                    }
+//                    sentences.add(words);           // add to list of array lists
+//                }
+//
+//                num_paragraphs = 0;
+//                hmap.put(new Language(lang), sentences);  // add to hash map
+//                br.close();
+//            }
+//            catch (Exception e) {
+//                System.out.println(e.fillInStackTrace());
+//            }
+//        }
+//
+//        return hmap;
+//    }
 
 
     /**
      * Gets a hashmap of sentences for every language
      */
-    public HashMap<Language, ArrayList<String>> getInputSentences(String dataType) {
+    public static HashMap<Language, ArrayList<String>> getInputSentences(String dataType) {
         //INPUT: dataType: One of the values {"_train", "_test", "_dev"} - this will be added to the filename being read.
         HashMap<Language, ArrayList<String>> hmap = new HashMap<Language, ArrayList<String>>();
 
@@ -290,71 +288,67 @@ public class ReadData {
             }
         }
 
-
         return hmap;
-
-
 
     }
 
 
-    public HashMap<Language, ArrayList<String>> getLanguageData(String dataType, String lang) {
-        //INPUT: dataType: One of the values {"_train", "_test", "_dev"} - this will be added to the filename being read.
-        HashMap<Language, ArrayList<String>> hmap = new HashMap<Language, ArrayList<String>>();
-
-
-
-        BufferedReader br;
-        try {
-            br = getLangReader(lang, dataType);
-        }
-        catch (IOException e) {
-            // no .txt or .txt.zip found
-            System.out.println("Language file for '" + lang + dataType + "' could not be opened, returning null");
-            return null;
-        }
-
-        try {
-
-            String sCurrentLine;
-            ArrayList<String> sentences = new ArrayList<String>();
-
-            while ((sCurrentLine = br.readLine()) != null) {
-
-                //for each line read
-              //  if (num_paragraphs++ > maxParagraphs) break;
-
-                String tempsentence = sCurrentLine;
-                //if the value is one of the invalid characters, remove
-                String editSentence = "";
-                for (int cindex = 0; cindex < sCurrentLine.length(); cindex++) {
-                    if (!INVALID_CHARACTERS.contains(String.valueOf(sCurrentLine.charAt(cindex)))) {
-                        editSentence += sCurrentLine.charAt(cindex);
-
-                    }
-                }
-
-                if(editSentence != "") {
-                    sentences.add(editSentence);           // Add to the list of sentences
-                }
-            }
-
-
-
-            num_paragraphs = 0;
-            hmap.put(new Language(lang), sentences);  // add to hash map
-            br.close();
-        } catch (Exception e) {
-            System.out.println(e.fillInStackTrace());
-        }
-
-
-
-    return hmap;
-
-
-
-}
+//    public HashMap<Language, ArrayList<String>> getLanguageData(String dataType, String lang) {
+//        //INPUT: dataType: One of the values {"_train", "_test", "_dev"} - this will be added to the filename being read.
+//        HashMap<Language, ArrayList<String>> hmap = new HashMap<Language, ArrayList<String>>();
+//
+//
+//
+//        BufferedReader br;
+//        try {
+//            br = getLangReader(lang, dataType);
+//        }
+//        catch (IOException e) {
+//            // no .txt or .txt.zip found
+//            System.out.println("Language file for '" + lang + dataType + "' could not be opened, returning null");
+//            return null;
+//        }
+//
+//        try {
+//
+//            String sCurrentLine;
+//            ArrayList<String> sentences = new ArrayList<String>();
+//
+//            while ((sCurrentLine = br.readLine()) != null) {
+//
+//                //for each line read
+//              //  if (num_paragraphs++ > maxParagraphs) break;
+//
+//                String tempsentence = sCurrentLine;
+//                //if the value is one of the invalid characters, remove
+//                String editSentence = "";
+//                for (int cindex = 0; cindex < sCurrentLine.length(); cindex++) {
+//                    if (!INVALID_CHARACTERS.contains(String.valueOf(sCurrentLine.charAt(cindex)))) {
+//                        editSentence += sCurrentLine.charAt(cindex);
+//
+//                    }
+//                }
+//
+//                if(editSentence != "") {
+//                    sentences.add(editSentence);           // Add to the list of sentences
+//                }
+//            }
+//
+//
+//
+//            num_paragraphs = 0;
+//            hmap.put(new Language(lang), sentences);  // add to hash map
+//            br.close();
+//        } catch (Exception e) {
+//            System.out.println(e.fillInStackTrace());
+//        }
+//
+//
+//    return hmap;
+//
+//
+//
+//}
 
     private BufferedReader br_chunk;
     public HashMap<Language, ArrayList<String>> getNextChunk(String dataType, String language) {
@@ -402,8 +396,6 @@ public class ReadData {
         catch(IOException e){
             System.out.println(e.fillInStackTrace());
         }
-
-
 
         return hmap;
     }
