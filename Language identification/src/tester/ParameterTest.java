@@ -21,8 +21,8 @@ public class ParameterTest {
         HashMap<Language, ArrayList<String>> testData = reader.getInputSentences("_test");
         System.out.println("Read in Data!");
         //evaluation(trainingData, trainingData);
-        //outputDifferentParams(trainingData, testData);
-        outputTwitterSimul(trainingData);
+        outputDifferentParams(trainingData, testData);
+        //outputTwitterSimul(trainingData);
     }
 
     public static void evaluation(HashMap<Language, ArrayList<String>> trainingData, HashMap<Language, ArrayList<String>> testData) {
@@ -56,26 +56,27 @@ public class ParameterTest {
     public static void outputDifferentParams(HashMap<Language, ArrayList<String>> trainingData, HashMap<Language, ArrayList<String>> testData) {
         System.out.println("Parameter Test is active!");
         NGramClassifier classifier = new NGramClassifier();
-        int[] fNum = new int[]{1000, 2000, 3000, 4000, 5000};
+        int[] fNum = new int[]{1000, 2000, 3000, 4000};
         try {
-            BufferedWriter acc = new BufferedWriter(new FileWriter("AccuracyMatlab.csv"));
-            BufferedWriter f1 = new BufferedWriter(new FileWriter("F1Matlab.csv"));
-            String firstLine = "";
+            //BufferedWriter acc = new BufferedWriter(new FileWriter("AccuracyMatlab.csv"));
+            //BufferedWriter f1 = new BufferedWriter(new FileWriter("F1Matlab.csv"));
+            //String firstLine = "";
             //String secondLine = "";
             for (int j = 5; j < 6; j++) {
                 //for (int k = j; k < 7; k++) {
-                    firstLine += ", " + Integer.toString(j);
+                    //firstLine += ", " + Integer.toString(j);
                     //secondLine += ", " + Integer.toString(k);
                 //}
             }
-            acc.write(firstLine + "\n");
-            f1.write(firstLine + "\n");
+            //acc.write(firstLine + "\n");
+            //f1.write(firstLine + "\n");
             //acc.write(secondLine + "\n");
             //f1.write(secondLine + "\n");
             for (int i : fNum) {
                 classifier.setTopCounts(i);
+                BufferedWriter acc = new BufferedWriter(new FileWriter("AccuracyMatlab.csv", true));
                 acc.write(Integer.toString(i));
-                f1.write(Integer.toString(i));
+                //f1.write(Integer.toString(i));
                 for (int j = 5; j < 6; j++) {
                     //for (int k = j; k < 7; k++) {
                         classifier.setNGram(j, j);
@@ -83,17 +84,18 @@ public class ParameterTest {
                         classifier.train(trainingData);
                         System.out.println("Finished Training. Now evaluating...!");
                         double a = classifier.accuracy(testData);
-                        double f = classifier.f1(testData);
+                        System.out.print(i + ": accuracy: " + a);
+                        //double f = classifier.f1(testData);
                         acc.write(", " + Double.toString(a));
-                        f1.write(", " + Double.toString(f));
+                        //f1.write(", " + Double.toString(f));
                         classifier.reset();
                     //}
                 }
                 acc.write("\n");
-                f1.write("\n");
+                acc.close();
+                //f1.write("\n");
             }
-            acc.close();
-            f1.close();
+            //f1.close();
         } catch (Exception e) {
             System.out.println(e.fillInStackTrace());
         }
