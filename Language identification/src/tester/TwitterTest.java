@@ -27,6 +27,7 @@ public class TwitterTest {
         }
         double taccuracy = classifier.getAccuracy();
         System.out.println("Acccuracy on test: " + taccuracy);
+
         }
 
 
