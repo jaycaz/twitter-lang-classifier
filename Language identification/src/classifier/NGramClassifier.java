@@ -14,8 +14,8 @@ import util.Language;
 public class NGramClassifier extends Classifier {
 	private HashMap<Language, ClassicCounter<String>> nGramProb;
 	private NGramFeatures nGramExtractor;
-	private int nGramMax = 4;
-	private int nGramMin = 2;
+	private int nGramMax = 5;
+	private int nGramMin = 5;
 	
 	private int topCounts = 5000;
 	private double minProb = 1/((double) topCounts * 1000);

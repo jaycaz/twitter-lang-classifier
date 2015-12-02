@@ -50,14 +50,17 @@ public class Evaluator {
     public ClassicCounter<String> f1ByClass(String[] guesses, String[] gold, boolean printConfusionMatrix) {
         assert guesses.length == gold.length : "Length of the guesses and real labels differ - aborted";
         HashMap<String, Integer> labelInd = new HashMap<>();
+        ArrayList<String> languages = new ArrayList<>();
         int index = 0;
         for (int i = 0; i < gold.length; i++) {
             if (!labelInd.containsKey(gold[i])) {
                 labelInd.put(gold[i], index);
+                languages.add(gold[i]);
                 index++;
             }
             if (!labelInd.containsKey(guesses[i])) {
                 labelInd.put(guesses[i], index);
+                languages.add(guesses[i]);
                 index++;
             }
         }
@@ -91,22 +94,21 @@ public class Evaluator {
             total += f1;
             f1Scores.incrementCount(s, f1);
         }
-        if (printConfusionMatrix) printConfusionMatrix(confusionMatrix, labelInd);
+        if (printConfusionMatrix) printConfusionMatrix(confusionMatrix, labelInd, languages);
         f1Scores.incrementCount("total", total/f1Scores.size());
         return f1Scores;
     }
 
-    private void printConfusionMatrix(int[][] confusionMatrix, HashMap<String, Integer> labelInd) {
+    private void printConfusionMatrix(int[][] confusionMatrix, HashMap<String, Integer> labelInd, ArrayList<String> languages) {
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter("confusion Matrix.csv"));
             String firstLine = "";
             String rest = "";
-            for (String s: labelInd.keySet()) {
-                int index = labelInd.get(s);
-                firstLine += ", " + s;
-                rest += s;
+            for (int j = 0; j < labelInd.size(); j++) {
+                firstLine += ", " + languages.get(j);
+                rest += languages.get(j);
                 for (int i = 0; i < labelInd.size(); i++) {
-                    rest += Integer.toString(confusionMatrix[index][i]);
+                    rest += ", " + Integer.toString(confusionMatrix[i][j]);
                 }
                 rest += "\n";
             }

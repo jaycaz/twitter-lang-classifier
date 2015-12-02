@@ -26,9 +26,13 @@ public abstract class Classifier {
 		ArrayList<String> guesses = new ArrayList<>();
 		ArrayList<String> labels = new ArrayList<>();
 		for (Language lang: testSentences.keySet()) {
+			int i = 0;
 			for (String paragraph: testSentences.get(lang)) {
-				labels.add(lang.getName());
-				guesses.add(classify(paragraph).getName());
+				if (i < 1000) {
+					labels.add(lang.getName());
+					guesses.add(classify(paragraph).getName());
+					i++;
+				}
 			}
 		}
 		return new Pair<> (guesses, labels);
@@ -56,12 +60,12 @@ public abstract class Classifier {
 		return f1.getCount("total");
 	}
 
-	public ClassicCounter<String> f1ByClass(HashMap<Language, ArrayList<String>> testSentences) {
+	public ClassicCounter<String> f1ByClass(HashMap<Language, ArrayList<String>> testSentences, boolean printConfusionMatrix) {
 		Evaluator eval = new Evaluator();
 		Pair<ArrayList<String>, ArrayList<String>> guessLabels = getGuessLabelLists(testSentences);
 		ArrayList<String> guesses = guessLabels.first();
 		ArrayList<String> labels = guessLabels.second();
-		return eval.f1ByClass(guesses.toArray(new String[guesses.size()]), labels.toArray(new String[labels.size()]), false);
+		return eval.f1ByClass(guesses.toArray(new String[guesses.size()]), labels.toArray(new String[labels.size()]), true);
 	}
 
 	public void f1Acc(HashMap<Language, ArrayList<String>> testSentences) {
@@ -72,7 +76,12 @@ public abstract class Classifier {
 		}
 	}
 
-	public Pair<Pair<Double, Double>, ArrayList<Pair<String, Pair<Double, Double>>>> accuracyAndF1ByClass(HashMap<Language, ArrayList<String>> testSentences) {
+	public ClassicCounter<String> f1ByClass(HashMap<Language, ArrayList<String>> testSentences) {
+		return f1ByClass(testSentences, false);
+	}
+
+
+		public Pair<Pair<Double, Double>, ArrayList<Pair<String, Pair<Double, Double>>>> accuracyAndF1ByClass(HashMap<Language, ArrayList<String>> testSentences) {
 		ArrayList<Pair<String, Pair<Double, Double>>> performance = new ArrayList<Pair<String, Pair<Double, Double>>>();
 		ClassicCounter<String> f1 = f1ByClass(testSentences);
 		ClassicCounter<String> acc = accuracyByClass(testSentences);

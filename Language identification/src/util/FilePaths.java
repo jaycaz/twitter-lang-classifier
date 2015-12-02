@@ -8,6 +8,6 @@ import java.nio.file.Paths;
  */
 public class FilePaths {
 
-    public static final String DATA_PATH = Paths.get("Language Identification/data").toAbsolutePath().toString();
-    public static final String UTIL_PATH = Paths.get("Language Identification/src/util").toAbsolutePath().toString();
+    public static final String DATA_PATH = Paths.get("data").toAbsolutePath().toString();
+    public static final String UTIL_PATH = Paths.get("src/util").toAbsolutePath().toString();
 }
