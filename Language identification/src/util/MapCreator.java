@@ -2,12 +2,9 @@ package util;
 
 import dataReader.ReadData;
 import edu.stanford.nlp.stats.IntCounter;
-import edu.stanford.nlp.stats.Counters;
-import scala.Char;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-
 import java.util.HashMap;
 
 /**

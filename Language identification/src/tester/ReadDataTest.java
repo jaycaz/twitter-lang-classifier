@@ -1,13 +1,10 @@
 package tester;
 
 import dataReader.ReadData;
-import util.Language;
 
 import java.io.BufferedReader;
-import java.util.ArrayList;
-import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
 public class ReadDataTest {
 

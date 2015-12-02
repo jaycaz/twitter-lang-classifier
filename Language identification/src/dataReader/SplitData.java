@@ -1,12 +1,7 @@
 package dataReader;
 import java.io.*;
-import java.io.FileReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Random;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -125,6 +120,47 @@ public class SplitData {
         }
     }
 
+
+    public void splitFile(String filename){
+        BufferedReader br;
+        Random rand = new Random();
+        int random_array[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2 ,2 , 3 , 3 , 3}; // array with 60, 25, 15 proability
+        try {
+            br = new BufferedReader(new FileReader(new File(filename)));
+            BufferedWriter bw_train = new BufferedWriter(new FileWriter(filename + "_train"));
+            BufferedWriter bw_test = new BufferedWriter(new FileWriter(filename + "_test"));
+            BufferedWriter bw_dev = new BufferedWriter(new FileWriter(filename + "_dev"));
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                line = line.concat("\n");
+                int rand_int = random_array[rand.nextInt(random_array.length)];
+
+                switch (rand_int) {
+                    case 1:
+                        bw_train.write(line);
+                        break;
+                    case 3:
+                        bw_test.write(line);
+                        break;
+                    case 2:
+                        bw_dev.write(line);
+                        break;
+                }
+            }
+
+            br.close();
+            bw_dev.close();
+            bw_test.close();
+            bw_train.close();
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 //    public static int getRandom(int[] array) {
 //        int rnd = new Random().nextInt(array.length);
 //        return array[rnd];
