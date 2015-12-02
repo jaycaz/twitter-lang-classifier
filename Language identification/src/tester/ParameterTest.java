@@ -38,15 +38,16 @@ public class ParameterTest {
         NGramClassifier classifier = new NGramClassifier();
         classifier.train(trainingData);
         try {
-            BufferedWriter twitter = new BufferedWriter(new FileWriter("TwitterMatlab.csv"));
-            twitter.write(", accuracy, f1 \n");
+            //BufferedWriter twitter = new BufferedWriter(new FileWriter("TwitterMatlab.csv"));
+            //twitter.write(", accuracy, f1 \n");
             for (int i = 5; i < 21; i = i + 5) {
+                BufferedWriter twitter = new BufferedWriter(new FileWriter("TwitterMatlab.csv", true));
                 HashMap<Language, ArrayList<String>> testData = twitterSim.getTestingData(i, i);
-                double f = classifier.f1(testData);
+                //double f = classifier.f1(testData);
                 double acc = classifier.accuracy(testData);
-                twitter.write("Sentence length: " + Integer.toString(i) + ", " + Double.toString(acc) + ", " + Double.toString(f) + "\n");
+                twitter.write("Sentence length: " + Integer.toString(i) + ", " + Double.toString(acc) + "\n");
+                twitter.close();
             }
-            twitter.close();
         } catch (Exception e) {
             System.out.println(e.fillInStackTrace());
         }
