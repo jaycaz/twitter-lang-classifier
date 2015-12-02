@@ -1,5 +1,6 @@
 package classifier;
 
+import dataReader.ReadData;
 import edu.stanford.nlp.classify.Dataset;
 import edu.stanford.nlp.classify.GeneralDataset;
 import edu.stanford.nlp.classify.SVMLightClassifier;
@@ -29,38 +30,47 @@ public class NGramChunkClassify {
         nGramProb = new HashMap<Language, ClassicCounter<String>>();
     }
 
-    public void train(
-            HashMap<Language, ArrayList<String>> trainingData) {
+    public void train(ReadData reader , String l) {
 
-        for(Language language : trainingData.keySet()) {
-            ClassicCounter<String> features = new ClassicCounter<String>();
-            for (String sentence: trainingData.get(language)) {
+
+        HashMap<Language, ArrayList<String>> trainingData;
+        trainingData = reader.getNextChunk("_train", l);
+        ClassicCounter<String> features = new ClassicCounter<String>();
+        while( trainingData != null){
+        for (Language language : trainingData.keySet()) {
+
+            for (String sentence : trainingData.get(language)) {
                 features = countNGrams(sentence, features);
             }
-            //Counters.retainTop(features, topCounts);
+            Counters.retainTop(features, topCounts);
             //Counters.normalize(features);
-            System.out.println(nGramProb.containsKey(language));
-            boolean present = false;
-            for(Language key: nGramProb.keySet() )
-            {
-                System.out.println("IN ITERATOR: " + key);
-                if(key.equals(language)){
-                    ClassicCounter<String> tempCounter = new ClassicCounter<String>(nGramProb.get(key));
-                    tempCounter.addAll(features);
-                    nGramProb.remove(language);
-                    nGramProb.put(language, tempCounter);
-                    System.out.println("Feature len: " + tempCounter.size() );
-                    System.out.println("Feature len: .. " + nGramProb.get(language).size() );
-                    present = true;
 
+            boolean present = false;
+            Language k = null;
+            for (Language key : nGramProb.keySet()) {
+
+                if (key.equals(language)) {
+                    present = true;
+                    k = key;
                 }
             }
-            if(!present) {
+            if (!present) {
                 nGramProb.put(language, features);
-                System.out.println("Feature len: .. " + nGramProb.get(language).size() );
+                System.out.println("Feature len: .. " + nGramProb.get(language).size());
+            }
+            else{
+                ClassicCounter<String> tempCounter = new ClassicCounter<String>(nGramProb.get(k));
+                tempCounter.addAll(features);
+                nGramProb.put(language, tempCounter);
+
+                System.out.println("Feature len: " + tempCounter.size());
+                System.out.println("Feature len: .. " + nGramProb.get(language).size());
             }
 
         }
+            trainingData = reader.getNextChunk("_train", l);
+        }
+
     }
 
     public void trainClassifier(HashMap<Language, ArrayList<String>> trainingData) {

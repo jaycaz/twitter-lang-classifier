@@ -19,7 +19,7 @@ public class BaselineTest {
     public static void main(String []args) {
         System.out.println("BaselineTest is active!");
         ReadData reader = new ReadData();
-        HashMap<Language, ArrayList<ArrayList<String>>> TrainingData = reader.getInputMap("_train");
+        HashMap<Language, ArrayList<String>> TrainingData = reader.getInputSentences("_train");
         System.out.println("Read in Data!");
         BaselineClassifier classifier = new BaselineClassifier();
         System.out.println("Training...!");
@@ -32,7 +32,7 @@ public class BaselineTest {
         //System.out.println("Acccuracy on dev: " + accuracy);
         //double fscore = classifier.f1(devData);
         //System.out.println("F1: " + fscore);
-        HashMap<Language, ArrayList<ArrayList<String>>> testData = reader.getInputMap("_test");
+        HashMap<Language, ArrayList<String>> testData = reader.getInputSentences("_test");
         double taccuracy = classifier.accuracy(testData);
         System.out.println("Acccuracy on test: " + taccuracy);
         //double tfscore = classifier.f1(testData);

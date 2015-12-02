@@ -13,7 +13,7 @@ import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.stats.Counters;
 import featureExtractor.NGramFeatures;
 
-public class LogisticRegression {
+public class LogisticRegression extends Classifier {
 	LinearClassifier<ClassicCounter<String>, Language> c;
 	NGramFeatures nGramExtractor;
 	int topCounts = 1000;
@@ -50,26 +50,6 @@ public class LogisticRegression {
 		RVFDatum<ClassicCounter<String>, Language> d = new RVFDatum(features);
 		Object label = c.classOf(d);
 		return (Language) label;
-	}
-	
-	public double accuracy(HashMap<Language, ArrayList<String>> testSentences) {
-		int error = 0;
-		int total = 0;
-		HashMap<String, Double> performance = new HashMap<String, Double>();
-		for (Language lang: testSentences.keySet()) {
-			System.out.println("Processing lang: " + lang);
-			int i = 0;
-			for (String paragraph: testSentences.get(lang)) {
-				if (i > 1000) continue;
-				Language guess = classify(paragraph);
-				if (!lang.equals(guess)) {
-					error++;
-				}
-				total++;
-				i++;
-			}
-		}
-		return (total - error) / (float) total;
 	}
 
 }

@@ -14,14 +14,14 @@ public class FrequencyClassifier extends Classifier {
 	int numWords = 100;
 
 	// Find most frequent word for every language
-	public void train(HashMap<Language, ArrayList<ArrayList<String>>> trainingData) {
+	public void train(HashMap<Language, ArrayList<String>> trainingData) {
 		mostFrequentWords = new HashMap<Language, ArrayList<String>> ();
 
 		for(Language language : trainingData.keySet()) {
 			IntCounter<String> wordCounts = new IntCounter<String>();
 
-			for(ArrayList<String> paragraph : trainingData.get(language)) {
-				for(String word : paragraph) {
+			for(String paragraph : trainingData.get(language)) {
+				for(String word : paragraph.split(" ")) {
 					// Add word to word counts
 					wordCounts.incrementCount(word, 1);
 				}
@@ -37,9 +37,9 @@ public class FrequencyClassifier extends Classifier {
 		}
 	}
 	
-	public Language classify(ArrayList<String> sentence) {
+	public Language classify(String sentence) {
 		IntCounter<Language> languageCounts = new IntCounter();
-		for (String word: sentence) {
+		for (String word: sentence.split(" ")) {
 			for (Language lang: mostFrequentWords.keySet()) {
 				if (mostFrequentWords.get(lang).contains(word)) {
 					languageCounts.incrementCount(lang, 1);

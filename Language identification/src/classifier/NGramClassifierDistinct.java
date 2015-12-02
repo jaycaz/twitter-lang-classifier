@@ -111,7 +111,7 @@ public class NGramClassifierDistinct {
             System.out.println("Processing lang: " + lang);
             int i = 0;
             for (String paragraph: testSentences.get(lang)) {
-                if (i > 100) continue;
+                //if (i > 100) continue;
                 Language guess = classify(paragraph);
                 if (!lang.equals(guess)) {
                     error++;
