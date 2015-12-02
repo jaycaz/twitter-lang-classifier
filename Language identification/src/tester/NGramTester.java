@@ -32,7 +32,8 @@ public class NGramTester {
         System.out.println("Finished Training. Now evaluating...!");
 
         HashMap<Language, ArrayList<String>> testData = reader.getInputSentences("_test");
-        classifier.writeAccuracyByClassSortedToFile("AccuracyByClassSorted.txt", testData);
+        System.out.print("Accuracy: " + classifier.accuracy(testData));
+        //classifier.writeAccuracyByClassSortedToFile("AccuracyByClassSorted.txt", testData);
         //TwitterDataSimulator twitterSim = new TwitterDataSimulator();
         //HashMap<Language, ArrayList<String>> testData = twitterSim.getTestingData(5, 10);
         //System.out.println("Accuracy: " + classifier.accuracy(testData));
