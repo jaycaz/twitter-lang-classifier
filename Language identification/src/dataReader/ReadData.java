@@ -467,6 +467,7 @@ public class ReadData {
 
                 String[] words = line.split(" ");
                 label = words[0];
+                if(label.contains("und")) continue;
                 if(!label.equals( pLabel) && pLabel!= null)
                 {
                     hmap.put(pLabel, sentences);
@@ -475,7 +476,21 @@ public class ReadData {
                 }
                 String newLine = "";
                 for (int i = 1; i < words.length; i++){
-                    newLine += words[i];
+                  //  System.out.println(words[i]);
+                    if(words[i].contains("http://") || words[i].contains("@")|| words[i].contains("#"))
+                        continue;
+                    String editWord = "";
+                    for(int cindex = 0; cindex < words[i].length(); cindex++)
+                    {
+                        if(!INVALID_CHARACTERS.contains(String.valueOf(words[i].charAt(cindex))))
+                            editWord += words[i].charAt(cindex);
+                    }
+
+
+                    if(editWord != "") {
+                        newLine += editWord;
+                    }
+
                 }
                 sentences.add(newLine);
                 pLabel = label;
