@@ -401,6 +401,7 @@ public class ReadData {
 
         return hmap;
     }
+
     //TODO: Need to clean up garbage characters.
     //TODO: read and train in chunks ; read and test in chunks
 
@@ -467,15 +468,10 @@ public class ReadData {
                 String[] words = line.split(" ");
                 label = words[0];
                 if(label.contains("und")) continue;
-                if(!label.equals( pLabel) && pLabel!= null)
-                {
-                    hmap.put(pLabel, sentences);
-                    sentences.clear();
-                    System.out.println("label " + label + " pLabel " + pLabel);
-                }
+
                 String newLine = "";
                 for (int i = 1; i < words.length; i++){
-                  //  System.out.println(words[i]);
+                    //  System.out.println(words[i]);
                     if(words[i].contains("http://") || words[i].contains("@")|| words[i].contains("#"))
                         continue;
                     String editWord = "";
@@ -487,11 +483,28 @@ public class ReadData {
 
 
                     if(editWord != "") {
-                        newLine += editWord;
-                        System.out.println("reading: " + words[0] + " " + words[1]);
+                        newLine += " " + editWord;
+                        //System.out.println("reading: " + words[0] + " " + words[1]);
                     }
 
                 }
+
+                boolean found = false;
+                for (String keyLabel: hmap.keySet() )
+                {
+                    if (label.equals(keyLabel)){
+                        ArrayList<String> list = hmap.get(keyLabel);
+                        list.add(newLine);
+                        hmap.put(label, list);
+                        found = true;
+                    }
+                }
+                if(!found){
+                    ArrayList<String> list = new ArrayList<String>();
+                    list.add(newLine);
+                    hmap.put(label, list);
+                }
+
                 sentences.add(newLine);
                 pLabel = label;
 
