@@ -21,8 +21,8 @@ public class ParameterTest {
         HashMap<Language, ArrayList<String>> testData = reader.getInputSentences("_test");
         System.out.println("Read in Data!");
         //evaluation(trainingData, trainingData);
-        outputDifferentParams(trainingData, testData);
-        //outputTwitterSimul(trainingData);
+        //outputDifferentParams(trainingData, testData);
+        outputTwitterSimul(trainingData);
     }
 
     public static void evaluation(HashMap<Language, ArrayList<String>> trainingData, HashMap<Language, ArrayList<String>> testData) {
@@ -37,10 +37,11 @@ public class ParameterTest {
         TwitterDataSimulator twitterSim = new TwitterDataSimulator();
         NGramClassifier classifier = new NGramClassifier();
         classifier.train(trainingData);
+        classifier.writeTopNFeaturesWithCountToFile("TopFeatures.txt", 20);
         try {
             //BufferedWriter twitter = new BufferedWriter(new FileWriter("TwitterMatlab.csv"));
             //twitter.write(", accuracy, f1 \n");
-            for (int i = 5; i < 21; i = i + 5) {
+            for (int i = 25; i < 31; i = i + 5) {
                 BufferedWriter twitter = new BufferedWriter(new FileWriter("TwitterMatlab.csv", true));
                 HashMap<Language, ArrayList<String>> testData = twitterSim.getTestingData(i, i);
                 //double f = classifier.f1(testData);

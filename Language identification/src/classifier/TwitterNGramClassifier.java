@@ -3,6 +3,10 @@ package classifier;
 import dataReader.ReadData;
 import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.stats.Counters;
+import edu.stanford.nlp.util.Pair;
+import featureExtractor.NGramFeature;
+import featureExtractor.NGramFeatures;
+import util.Evaluator;
 import util.Language;
 
 import java.util.ArrayList;
@@ -14,7 +18,10 @@ import java.util.HashMap;
 public class TwitterNGramClassifier {
 
 
-    public HashMap<String, ClassicCounter<String>> nGramProb;
+    private HashMap<String, ClassicCounter<String>> nGramProb;
+    private NGramFeatures nGramExtractor;
+    private int nGramMax = 5;
+    private int nGramMin = 5;
 
     int nGram = 3;
     int topCounts = 1000;
@@ -68,6 +75,33 @@ public class TwitterNGramClassifier {
 
     }
 
+    public void trainOnFull (ReadData reader , String filename) {
+        HashMap<String, ClassicCounter<String>> counts = new HashMap<String, ClassicCounter<String>>();
+        nGramExtractor = new NGramFeatures();
+        HashMap<String, ArrayList<String>> trainingData;
+        trainingData = reader.getNextTweets(filename);
+        while( trainingData != null) {
+            for (String language: trainingData.keySet()) {
+                ClassicCounter<String> features = new ClassicCounter<String>();
+                if (counts.containsKey(language)) {
+                    features = counts.get(language);
+                }
+                for (String sentence : trainingData.get(language)) {
+                    features = nGramExtractor.getFeatures(sentence, features, nGramMin, nGramMax);
+                }
+                counts.put(language, features);
+            }
+            trainingData = reader.getNextTweets(filename);
+        }
+        for (String language: counts.keySet()) {
+            ClassicCounter<String> features = counts.get(language);
+            Counters.retainTop(features, topCounts);
+            Counters.normalize(features);
+            nGramProb.put(language, features);
+        }
+
+    }
+
 
 
     private ClassicCounter<String> countNGrams(String sentence, ClassicCounter<String> counter) {
@@ -80,7 +114,54 @@ public class TwitterNGramClassifier {
     }
 
 
+    public double accuracy2(HashMap<String, ArrayList<String>> testSentences) {
+        Evaluator eval = new Evaluator();
+        Pair<ArrayList<String>, ArrayList<String>> guessLabels = getGuessLabelLists(testSentences);
+        ArrayList<String> guesses = guessLabels.first();
+        ArrayList<String> labels = guessLabels.second();
+        return eval.accuracy(guesses.toArray(new String[guesses.size()]), labels.toArray(new String[labels.size()]));
+    }
 
+    private Pair<ArrayList<String>, ArrayList<String>> getGuessLabelLists(HashMap<String, ArrayList<String>> testSentences) {
+        ArrayList<String> guesses = new ArrayList<>();
+        ArrayList<String> labels = new ArrayList<>();
+        for (String lang: testSentences.keySet()) {
+            int i = 0;
+            for (String paragraph: testSentences.get(lang)) {
+                if (i < 100) {
+                    labels.add(lang);
+                    guesses.add(classifyLog(paragraph));
+                    i++;
+                }
+            }
+        }
+        return new Pair<> (guesses, labels);
+    }
+
+    public String classifyLog(String sentence) {
+        ClassicCounter<String> nGrams = new ClassicCounter<String>();
+        nGrams = nGramExtractor.getFeatures(sentence, nGrams, nGramMin, nGramMax);
+        double maxProb = Double.NEGATIVE_INFINITY;
+        String maxLang = null;
+        for (String lang: nGramProb.keySet()) {
+            double prob = 0.0;
+            ClassicCounter<String> langCounts = nGramProb.get(lang);
+            for (String s: nGrams.keySet()) {
+                double p = langCounts.getCount(s);
+                if (p == 0) {
+                    prob = prob + Math.log(minProb) * nGrams.getCount(s);
+                } else {
+                    prob = prob + Math.log(p) * nGrams.getCount(s);
+                }
+            }
+            if (prob > maxProb) {
+                maxProb = prob;
+                maxLang = lang;
+            }
+        }
+        if (maxLang == null) return "UNKNOWN";
+        return maxLang;
+    }
 
     public String classify(String sentence) {
         ClassicCounter<String> nGrams = new ClassicCounter<String>();
