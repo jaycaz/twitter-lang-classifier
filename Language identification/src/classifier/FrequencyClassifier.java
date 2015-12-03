@@ -10,14 +10,14 @@ import java.util.List;
 
 
 public class FrequencyClassifier extends Classifier {
-	HashMap<Language, ArrayList<String>> mostFrequentWords;
+	HashMap<String, ArrayList<String>> mostFrequentWords;
 	int numWords = 100;
 
 	// Find most frequent word for every language
-	public void train(HashMap<Language, ArrayList<String>> trainingData) {
-		mostFrequentWords = new HashMap<Language, ArrayList<String>> ();
+	public void train(HashMap<String, ArrayList<String>> trainingData) {
+		mostFrequentWords = new HashMap<String, ArrayList<String>> ();
 
-		for(Language language : trainingData.keySet()) {
+		for(String language : trainingData.keySet()) {
 			IntCounter<String> wordCounts = new IntCounter<String>();
 
 			for(String paragraph : trainingData.get(language)) {
@@ -37,19 +37,19 @@ public class FrequencyClassifier extends Classifier {
 		}
 	}
 	
-	public Language classify(String sentence) {
-		IntCounter<Language> languageCounts = new IntCounter();
+	public String classify(String sentence) {
+		IntCounter<String> languageCounts = new IntCounter();
 		for (String word: sentence.split(" ")) {
-			for (Language lang: mostFrequentWords.keySet()) {
+			for (String lang: mostFrequentWords.keySet()) {
 				if (mostFrequentWords.get(lang).contains(word)) {
 					languageCounts.incrementCount(lang, 1);
 				}
 			}
 		}
 		if (languageCounts.isEmpty()) {
-			return Language.UNKNOWN;
+			return "UNKNOWN";
 		} else {
-			Language maxLang = Counters.toSortedList(languageCounts).get(0);
+			String maxLang = Counters.toSortedList(languageCounts).get(0);
 			return maxLang;
 		}
 	}

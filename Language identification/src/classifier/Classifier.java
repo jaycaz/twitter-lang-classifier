@@ -13,8 +13,9 @@ import util.Evaluator;
 import util.Language;
 
 public abstract class Classifier {
-	public abstract void train(HashMap<Language, ArrayList<String>> trainingData);
-	public abstract Language classify(String sentence);
+	public abstract void train(HashMap<String, ArrayList<String>> trainingData);
+
+	public abstract String classify(String sentence);
 
 	/**
 	 * Given a set of test sentences, returns a list of true labels and a list of guesses
@@ -22,15 +23,15 @@ public abstract class Classifier {
 	 * @param testSentences
 	 * @return Pair of guesses, labels
      */
-	private Pair<ArrayList<String>, ArrayList<String>> getGuessLabelLists(HashMap<Language, ArrayList<String>> testSentences) {
+	private Pair<ArrayList<String>, ArrayList<String>> getGuessLabelLists(HashMap<String, ArrayList<String>> testSentences) {
 		ArrayList<String> guesses = new ArrayList<>();
 		ArrayList<String> labels = new ArrayList<>();
-		for (Language lang: testSentences.keySet()) {
+		for (String lang: testSentences.keySet()) {
 			int i = 0;
 			for (String paragraph: testSentences.get(lang)) {
 				if (i < 100) {
-					labels.add(lang.getName());
-					guesses.add(classify(paragraph).getName());
+					labels.add(lang);
+					guesses.add(classify(paragraph));
 					i++;
 				}
 			}
@@ -38,7 +39,7 @@ public abstract class Classifier {
 		return new Pair<> (guesses, labels);
 	}
 
-	public double accuracy(HashMap<Language, ArrayList<String>> testSentences) {
+	public double accuracy(HashMap<String, ArrayList<String>> testSentences) {
 		Evaluator eval = new Evaluator();
 		Pair<ArrayList<String>, ArrayList<String>> guessLabels = getGuessLabelLists(testSentences);
 		ArrayList<String> guesses = guessLabels.first();
@@ -47,7 +48,7 @@ public abstract class Classifier {
 	}
 
 
-	public ClassicCounter<String> accuracyByClass(HashMap<Language, ArrayList<String>> testSentences) {
+	public ClassicCounter<String> accuracyByClass(HashMap<String, ArrayList<String>> testSentences) {
 		Evaluator eval = new Evaluator();
 		Pair<ArrayList<String>, ArrayList<String>> guessLabels = getGuessLabelLists(testSentences);
 		ArrayList<String> guesses = guessLabels.first();
@@ -55,12 +56,12 @@ public abstract class Classifier {
 		return eval.accuracyByClass(guesses.toArray(new String[guesses.size()]), labels.toArray(new String[labels.size()]));
 	}
 
-	public double f1(HashMap<Language, ArrayList<String>> testSentences) {
+	public double f1(HashMap<String, ArrayList<String>> testSentences) {
 		ClassicCounter<String> f1 = f1ByClass(testSentences);
 		return f1.getCount("total");
 	}
 
-	public ClassicCounter<String> f1ByClass(HashMap<Language, ArrayList<String>> testSentences, boolean printConfusionMatrix) {
+	public ClassicCounter<String> f1ByClass(HashMap<String, ArrayList<String>> testSentences, boolean printConfusionMatrix) {
 		Evaluator eval = new Evaluator();
 		Pair<ArrayList<String>, ArrayList<String>> guessLabels = getGuessLabelLists(testSentences);
 		ArrayList<String> guesses = guessLabels.first();
@@ -68,7 +69,7 @@ public abstract class Classifier {
 		return eval.f1ByClass(guesses.toArray(new String[guesses.size()]), labels.toArray(new String[labels.size()]), true);
 	}
 
-	public void f1Acc(HashMap<Language, ArrayList<String>> testSentences) {
+	public void f1Acc(HashMap<String, ArrayList<String>> testSentences) {
 		ClassicCounter<String> f = f1ByClass(testSentences);
 		ClassicCounter<String> a = accuracyByClass(testSentences);
 		for (String lang: f.keySet()) {
@@ -76,12 +77,12 @@ public abstract class Classifier {
 		}
 	}
 
-	public ClassicCounter<String> f1ByClass(HashMap<Language, ArrayList<String>> testSentences) {
+	public ClassicCounter<String> f1ByClass(HashMap<String, ArrayList<String>> testSentences) {
 		return f1ByClass(testSentences, false);
 	}
 
 
-		public Pair<Pair<Double, Double>, ArrayList<Pair<String, Pair<Double, Double>>>> accuracyAndF1ByClass(HashMap<Language, ArrayList<String>> testSentences) {
+		public Pair<Pair<Double, Double>, ArrayList<Pair<String, Pair<Double, Double>>>> accuracyAndF1ByClass(HashMap<String, ArrayList<String>> testSentences) {
 		ArrayList<Pair<String, Pair<Double, Double>>> performance = new ArrayList<Pair<String, Pair<Double, Double>>>();
 		ClassicCounter<String> f1 = f1ByClass(testSentences);
 		ClassicCounter<String> acc = accuracyByClass(testSentences);
@@ -93,7 +94,7 @@ public abstract class Classifier {
 		return new Pair(new Pair<Double, Double>(accuracyAll, f1.getCount("total")), performance);
 	}
 
-	public void writeScoresToFile(String filename, HashMap<Language, ArrayList<String>> testSentences) {
+	public void writeScoresToFile(String filename, HashMap<String, ArrayList<String>> testSentences) {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
 			Pair<Pair<Double, Double>, ArrayList<Pair<String, Pair<Double, Double>>>> scores = accuracyAndF1ByClass(testSentences);
@@ -110,7 +111,7 @@ public abstract class Classifier {
 		}
 	}
 
-	public void writeAccuracyByClassSortedToFile (String filename, HashMap<Language, ArrayList<String>> testData) {
+	public void writeAccuracyByClassSortedToFile (String filename, HashMap<String, ArrayList<String>> testData) {
 		ClassicCounter<String> acc = accuracyByClass(testData);
 		List<Pair<String, Double>> list = Counters.toSortedListWithCounts(acc);
 		try {

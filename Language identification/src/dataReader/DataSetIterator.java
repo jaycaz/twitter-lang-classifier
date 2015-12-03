@@ -32,8 +32,8 @@ public class DataSetIterator {
     private int examplesSoFar = 0;
     private int currLanguageInd = 0;
     private Random rng;
-    HashMap<Language, ArrayList<String>> trainingData;
-    HashMap<Language, ArrayList<String>> devData;
+    HashMap<String, ArrayList<String>> trainingData;
+    HashMap<String, ArrayList<String>> devData;
 
 
     public DataSetIterator (int exampleLength, int miniBatchSize, int numExamplesToFetch, Random rng) {
@@ -142,11 +142,11 @@ public class DataSetIterator {
 
     public Pair<String, String> getRandomSentence(String language, String dataTyp) {
         Language l = new Language(language);
-        HashMap<Language, ArrayList<String>> data;
+        HashMap<String, ArrayList<String>> data;
         if (dataTyp.equals("train")) data = trainingData;
         else data = devData;
         ArrayList<String> list = new ArrayList<>();
-        for (Language ll: data.keySet()) {
+        for (String ll: data.keySet()) {
             if (ll.equals(l)) {
                 list = data.get(ll);
             }

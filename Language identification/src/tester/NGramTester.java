@@ -31,7 +31,7 @@ public class NGramTester {
     public static void main(String []args) {
         System.out.println("NGramTest is active!");
         ReadData reader = new ReadData();
-        HashMap<Language, ArrayList<String>> TrainingData = reader.getInputSentences("_train");
+        HashMap<String, ArrayList<String>> TrainingData = reader.getInputSentences("_train");
         System.out.println("Read in Data!");
         NGramClassifier classifier = new NGramClassifier();
         System.out.println("Training...!");
@@ -39,7 +39,7 @@ public class NGramTester {
         //classifier.writeToFile("nGramClassifier");
         System.out.println("Finished Training. Now evaluating...!");
 
-        HashMap<Language, ArrayList<String>> testData = reader.getInputSentences("_test");
+        HashMap<String, ArrayList<String>> testData = reader.getInputSentences("_test");
         System.out.print("Accuracy: " + classifier.accuracy(testData));
         //classifier.writeAccuracyByClassSortedToFile("AccuracyByClassSorted.txt", testData);
         //TwitterDataSimulator twitterSim = new TwitterDataSimulator();

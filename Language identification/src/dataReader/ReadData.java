@@ -238,9 +238,9 @@ public class ReadData {
     /**
      * Gets a hashmap of sentences for every language
      */
-    public static HashMap<Language, ArrayList<String>> getInputSentences(String dataType) {
+    public static HashMap<String, ArrayList<String>> getInputSentences(String dataType) {
         //INPUT: dataType: One of the values {"_train", "_test", "_dev"} - this will be added to the filename being read.
-        HashMap<Language, ArrayList<String>> hmap = new HashMap<Language, ArrayList<String>>();
+        HashMap<String, ArrayList<String>> hmap = new HashMap<String, ArrayList<String>>();
 
         for(String lang : filenames) {
             BufferedReader br;
@@ -280,7 +280,7 @@ public class ReadData {
                 }
 
                 num_paragraphs = 0;
-                hmap.put(new Language(lang), sentences);  // add to hash map
+                hmap.put(new Language(lang).getName(), sentences);  // add to hash map
                 br.close();
             } catch (Exception e) {
                 System.out.println(e.fillInStackTrace());

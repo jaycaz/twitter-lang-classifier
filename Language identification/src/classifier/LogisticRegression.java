@@ -14,25 +14,25 @@ import edu.stanford.nlp.stats.Counters;
 import featureExtractor.NGramFeatures;
 
 public class LogisticRegression extends Classifier {
-	LinearClassifier<ClassicCounter<String>, Language> c;
+	LinearClassifier<ClassicCounter<String>, String> c;
 	NGramFeatures nGramExtractor;
 	int topCounts = 1000;
 	int nGram = 4;
 
 	
-	public void train(HashMap<Language, ArrayList<String>> trainingData) {
+	public void train(HashMap<String, ArrayList<String>> trainingData) {
 		nGramExtractor = new NGramFeatures();
-		GeneralDataset<ClassicCounter<String>, Language> dataSet=new Dataset<ClassicCounter<String>, Language>();
-		for(Language language : trainingData.keySet()) {
+		GeneralDataset<ClassicCounter<String>, String> dataSet=new Dataset<ClassicCounter<String>, String>();
+		for(String language : trainingData.keySet()) {
 			ClassicCounter<String> features = new ClassicCounter<String>(); 
 			for(String sentence : trainingData.get(language)) {
 				features = nGramExtractor.getFeatures(sentence, features, 0, nGram);
 			}
 			Counters.retainTop(features, topCounts);
-			RVFDatum<ClassicCounter<String>, Language> d = new RVFDatum(features, language);
+			RVFDatum<ClassicCounter<String>, String> d = new RVFDatum(features, language);
 			dataSet.add(d);
 		}
-		LinearClassifierFactory<ClassicCounter<String>, Language> lcFactory = new LinearClassifierFactory<ClassicCounter<String>, Language>();
+		LinearClassifierFactory<ClassicCounter<String>, String> lcFactory = new LinearClassifierFactory<ClassicCounter<String>, String>();
 		c = lcFactory.trainClassifier(dataSet);
 	}
 	
@@ -44,12 +44,12 @@ public class LogisticRegression extends Classifier {
 		c = LinearClassifier.readClassifier(filename);
 	}
 	
-	public Language classify(String sentence) {
+	public String classify(String sentence) {
 		ClassicCounter<String> features = new ClassicCounter<String>(); 
 		features = nGramExtractor.getFeatures(sentence, features, 0, nGram);
-		RVFDatum<ClassicCounter<String>, Language> d = new RVFDatum(features);
+		RVFDatum<ClassicCounter<String>, String> d = new RVFDatum(features);
 		Object label = c.classOf(d);
-		return (Language) label;
+		return (String) label;
 	}
 
 }
