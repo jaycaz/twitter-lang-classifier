@@ -108,7 +108,7 @@ public class TwitterNGramClassifier {
             }
         }
         if (maxLang == null) return "UNKNOWN";
-        System.out.println("returning result: "+ maxLang);
+        //System.out.println("returning result: "+ maxLang);
         return maxLang;
     }
 
@@ -122,6 +122,7 @@ public class TwitterNGramClassifier {
             for (String paragraph: testSentences.get(lang)) {
                 //if (i > 100) continue;
                 String guess = classify(paragraph);
+                System.out.println("Supposed to be: " + lang + " guessed " + guess);
                 if (!lang.equals(guess)) {
                     error++;
                 }
