@@ -488,6 +488,7 @@ public class ReadData {
 
                     if(editWord != "") {
                         newLine += editWord;
+                        System.out.println("reading: " + words[0] + " " + words[1]);
                     }
 
                 }
@@ -496,11 +497,7 @@ public class ReadData {
 
             }
             System.out.println("read: " + sentences.size());
-            if (hmap.containsKey(pLabel)) {
-                ArrayList<String> list = hmap.get(pLabel);
-                list.addAll(sentences);
-                hmap.put(pLabel, list);
-            } else hmap.put(pLabel, sentences);
+
 
             if(line == null && sentences.size() == 0) {
                 brt.close();
@@ -508,10 +505,22 @@ public class ReadData {
                 return null;
             }
 
+
+            BufferedWriter bw = new BufferedWriter(new FileWriter("OUTPUT", true));
+            for (String key1: hmap.keySet()){
+                for(String s: hmap.get(key1)){
+                    bw.write(key1);
+                    bw.newLine();
+                    bw.write(s);
+                    bw.newLine();
+                }
+            }
+            bw.close();
         }
         catch(IOException e){
             System.out.println(e.fillInStackTrace());
         }
+
 
         return hmap;
     }
