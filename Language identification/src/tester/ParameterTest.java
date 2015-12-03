@@ -17,23 +17,23 @@ public class ParameterTest {
 
     public static void main(String []args) {
         ReadData reader = new ReadData();
-        HashMap<Language, ArrayList<String>> trainingData = reader.getInputSentences("_train");
-        HashMap<Language, ArrayList<String>> testData = reader.getInputSentences("_test");
+        HashMap<String, ArrayList<String>> trainingData = reader.getInputSentences("_train");
+        HashMap<String, ArrayList<String>> testData = reader.getInputSentences("_test");
         System.out.println("Read in Data!");
         //evaluation(trainingData, trainingData);
         //outputDifferentParams(trainingData, testData);
         outputTwitterSimul(trainingData);
     }
 
-    public static void evaluation(HashMap<Language, ArrayList<String>> trainingData, HashMap<Language, ArrayList<String>> testData) {
+    public static void evaluation(HashMap<String, ArrayList<String>> trainingData, HashMap<String, ArrayList<String>> testData) {
         NGramClassifier classifier = new NGramClassifier();
         classifier.train(trainingData);
-        classifier.writeAccuracyByClassSortedToFile("AccuracyByClassSorted.txt", testData);
-        classifier.f1ByClass(testData, true);
+        //classifier.writeAccuracyByClassSortedToFile("AccuracyByClassSorted.txt", testData);
+        //classifier.f1ByClass(testData, true);
 
     }
 
-    public static void outputTwitterSimul(HashMap<Language, ArrayList<String>> trainingData) {
+    public static void outputTwitterSimul(HashMap<String, ArrayList<String>> trainingData) {
         TwitterDataSimulator twitterSim = new TwitterDataSimulator();
         NGramClassifier classifier = new NGramClassifier();
         classifier.train(trainingData);
@@ -43,7 +43,7 @@ public class ParameterTest {
             //twitter.write(", accuracy, f1 \n");
             for (int i = 25; i < 31; i = i + 5) {
                 BufferedWriter twitter = new BufferedWriter(new FileWriter("TwitterMatlab.csv", true));
-                HashMap<Language, ArrayList<String>> testData = twitterSim.getTestingData(i, i);
+                HashMap<String, ArrayList<String>> testData = twitterSim.getTestingData(i, i);
                 //double f = classifier.f1(testData);
                 double acc = classifier.accuracy(testData);
                 twitter.write("Sentence length: " + Integer.toString(i) + ", " + Double.toString(acc) + "\n");
@@ -54,7 +54,7 @@ public class ParameterTest {
         }
     }
 
-    public static void outputDifferentParams(HashMap<Language, ArrayList<String>> trainingData, HashMap<Language, ArrayList<String>> testData) {
+    public static void outputDifferentParams(HashMap<String, ArrayList<String>> trainingData, HashMap<String, ArrayList<String>> testData) {
         System.out.println("Parameter Test is active!");
         NGramClassifier classifier = new NGramClassifier();
         int[] fNum = new int[]{1000, 2000, 3000, 4000};

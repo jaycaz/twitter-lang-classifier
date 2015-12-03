@@ -18,7 +18,7 @@ public class Evaluator {
         int error = 0;
         int total = 0;
         for (int i = 0; i < guesses.length; i++) {
-            if (guesses[i] != gold[i]) error++;
+            if (!guesses[i].equals(gold[i])) error++;
             total++;
         }
         return (total - error) / (float) total;

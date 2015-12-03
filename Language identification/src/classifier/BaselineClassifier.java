@@ -5,12 +5,12 @@ import java.util.HashMap;
 import util.Language;
 
 public class BaselineClassifier extends Classifier {
-	HashMap<Language, String> mostFrequentWords;
+	HashMap<String, String> mostFrequentWords;
 
 	// Find most frequent word for every language
-	public void train(HashMap<Language, ArrayList<String>> trainingData) {
-		mostFrequentWords = new HashMap<Language, String> ();
-		for(Language language : trainingData.keySet()) {
+	public void train(HashMap<String, ArrayList<String>> trainingData) {
+		mostFrequentWords = new HashMap<String, String> ();
+		for(String language : trainingData.keySet()) {
 			HashMap<String, Integer> wordCounts = new HashMap<String, Integer>();
 			String maxWord = "";
 			int maxCount = 0;
@@ -33,16 +33,16 @@ public class BaselineClassifier extends Classifier {
 				}
 			}
 			mostFrequentWords.put(language, maxWord);
-			//System.out.println("Language: " + language + " max Word: " + maxWord);
+			//System.out.println("String: " + language + " max Word: " + maxWord);
 		}
 	}
 	
-	public Language classify(String sentence) {
-		for (Language key: mostFrequentWords.keySet()) {
+	public String classify(String sentence) {
+		for (String key: mostFrequentWords.keySet()) {
 			if (sentence.contains(mostFrequentWords.get(key))) {
 				return key;
 			}
 		}
-		return Language.UNKNOWN;
+		return "UNKNOWN";
 	}
 }
