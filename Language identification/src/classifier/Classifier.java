@@ -28,7 +28,7 @@ public abstract class Classifier {
 		for (Language lang: testSentences.keySet()) {
 			int i = 0;
 			for (String paragraph: testSentences.get(lang)) {
-				if (i < 1000) {
+				if (i < 100) {
 					labels.add(lang.getName());
 					guesses.add(classify(paragraph).getName());
 					i++;
