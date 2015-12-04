@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class DSLReader {
 
     public static void main(String []args) {
-        String group = "F";
+        String group = "C";
         HashMap<String, ArrayList<String>> data = readInData("DSLCC/train.txt", group);
         NGramClassifier classifier = new NGramClassifier();
         classifier.train(data);
@@ -25,12 +25,16 @@ public class DSLReader {
 
     public static HashMap<String, ArrayList<String>> readInData(String filename, String group) {
         HashMap<String, ArrayList<String>> data = new HashMap<>();
+        //int max;
+        //if (filename.contains("train")) max = 18000;
+        //else max = 2000;
         try {
             BufferedReader br = new BufferedReader(new FileReader(filename));
             String line;
             //int index = 0;
             while ((line = br.readLine()) != null) {
-                //if (index > 100) break;
+                //index++;
+                //if (index%max > 100) continue;
                 String[] tokens = line.split("\t");
                 if (tokens[1].equals(group)) {
                     ArrayList<String> list = new ArrayList<>();
@@ -42,7 +46,6 @@ public class DSLReader {
                     }
                     data.put(tokens[2], list);
                 }
-                //index++;
             }
 
         } catch (FileNotFoundException e) {

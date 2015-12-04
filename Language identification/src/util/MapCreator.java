@@ -1,10 +1,12 @@
 package util;
 
+import dataReader.DSLReader;
 import dataReader.ReadData;
 import edu.stanford.nlp.stats.IntCounter;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -49,6 +51,25 @@ public class MapCreator {
             } catch (IOException e) {
                 System.out.println("IOException with file: " + file);
                 //throw e;
+            }
+        }
+        return charMap;
+    }
+
+    public HashMap<Character, Integer> createUniqueCharacterMap (String filename, String group) {
+        IntCounter<Character> counter = new IntCounter<>();
+        HashMap<Character, Integer> charMap = new HashMap<Character, Integer>();
+        DSLReader reader = new DSLReader();
+        HashMap<String, ArrayList<String>> data = reader.readInData(filename, group);
+        int index = 0;
+        for (String lang: data.keySet()) {
+            for (String sentence: data.get(lang)) {
+                for (char c: sentence.toCharArray()) {
+                    if (!charMap.containsKey(c)) {
+                        charMap.put(c, index);
+                        index++;
+                    }
+                }
             }
         }
         return charMap;
