@@ -1,9 +1,13 @@
 package classifier;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Random;
 
 import dataReader.DataSetIterator;
@@ -20,7 +24,9 @@ import org.deeplearning4j.nn.conf.layers.GravesLSTM;
 import org.deeplearning4j.nn.conf.layers.RnnOutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.optimize.api.IterationListener;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
+import org.deeplearning4j.plot.iterationlistener.NeuralNetPlotterIterationListener;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.factory.Nd4j;
@@ -36,8 +42,8 @@ public class RNN {
 
 
     public static void main( String[] args ) throws Exception {
-        int lstmLayerSize = 500;					//Number of units in each GravesLSTM layer
-        int miniBatchSize = 30;						//Size of mini batch to use when  training
+        int lstmLayerSize = 100;					//Number of units in each GravesLSTM layer
+        int miniBatchSize = 100;						//Size of mini batch to use when  training
         int examplesPerEpoch = 50*miniBatchSize;	//i.e., how many examples to learn on between generating samples
         int exampleLength = 100;					//Length of each training example
         int numEpochs = 100;							//Total number of training + sample generation epochs
@@ -46,12 +52,12 @@ public class RNN {
 
         //Get a DataSetIterator that handles vectorization of text into something we can use to train
         // our GravesLSTM network.
-        DataSetIterator iter = new DataSetIterator(exampleLength, miniBatchSize, examplesPerEpoch, new Random(12345));
+        DataSetIterator iter = new DataSetIterator(exampleLength, miniBatchSize, examplesPerEpoch, new Random(12345), "DSLCC/train.txt", "DSLCC/devel.txt", "A");
         int nOut = iter.totalOutcomes();
 
         //Set up network configuration:
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT).iterations(1)
+                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT).iterations(10)
                 .learningRate(0.1)
                 .rmsDecay(0.95)
                 .seed(12345)
@@ -75,7 +81,9 @@ public class RNN {
 
         MultiLayerNetwork net = new MultiLayerNetwork(conf);
         net.init();
-        net.setListeners(new ScoreIterationListener(1));
+        net.setListeners(new ScoreIterationListener(10));
+        //net.setListeners(new NeuralNetPlotterIterationListener (1));
+        //net.setListeners(new Collection<IterationListener>(new ScoreIterationListener(10), new NeuralNetPlotterIterationListener(1, true)));
 
         //Print the  number of parameters in the network (and for each layer)
         Layer[] layers = net.getLayers();
@@ -103,6 +111,8 @@ public class RNN {
             System.out.println("----- Error " + ((float) error)/total + " -----");
             iter.reset();	//Reset iterator for another epoch
         }
+        saveModel("", net);
+        loadModel("", net);
         System.out.println("\n\nExample complete");
     }
 
@@ -172,6 +182,37 @@ public class RNN {
         System.out.println("----- current error " + ((float) locError)/locTotal + " -----");
         //System.out.println("----- current accuracy with last" + ((float) locError2)/locTotal + " -----");
         return out;
+    }
+
+    public static void saveModel(String filename, MultiLayerNetwork net) {
+        try {
+            OutputStream fos = Files.newOutputStream(Paths.get("coefficients.bin"));
+            DataOutputStream dos = new DataOutputStream(fos);
+            Nd4j.write(net.params(), dos);
+            dos.flush();
+            dos.close();
+            FileUtils.write(new File("conf.json"), net.getLayerWiseConfigurations().toJson());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static MultiLayerNetwork loadModel(String pathname, MultiLayerNetwork model) {
+        try {
+            MultiLayerConfiguration confFromJson = MultiLayerConfiguration.fromJson(FileUtils.readFileToString(new File("conf.json")));
+            DataInputStream dis = new DataInputStream(new FileInputStream("coefficients.bin"));
+            INDArray newParams = Nd4j.read(dis);
+            dis.close();
+            MultiLayerNetwork savedNetwork = new MultiLayerNetwork(confFromJson);
+            savedNetwork.init();
+            savedNetwork.setParameters(newParams);
+            System.out.println("Original network params " + model.params());
+            System.out.println(savedNetwork.params());
+            return savedNetwork;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

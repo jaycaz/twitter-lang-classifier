@@ -20,9 +20,10 @@ import java.util.Random;
  */
 public class DataSetIterator {
 
-    //private String[] languages = {"afr", "bre", "bug", "cak", "ces",  "deu", "eng", "fin", "fra", "swe"};
-    private String[] languages = {"afr", "deu"};
-    //private String[] languages = {"abk", "afr", "aka", "amh", "amu", "ara", "arg", "asm", "ast", "awa", "aym" ,"aze" ,"bam" ,"bel" ,"ben" ,"bih" ,"bis" ,"bos" ,"bpy" ,"bre" ,"bug" ,"bul" ,"cak" ,"cat" ,"cco" ,"ceb" ,"ces" ,"cha" ,"che" ,"chr" ,"chv" ,"ckb" ,"cor" ,"cos" ,"crh" ,"cym" ,"dan" ,"deu" ,"div" ,"dzo","ell" ,"eml" ,"eng" ,"epo" ,"est" ,"eus" ,"ewe" ,"fao" ,"fas" ,"fij" ,"fin" ,"fra" ,"frp" ,"fry" ,"ful" ,"gla" ,"gle" ,"glg" ,"glv" ,"grn" ,"guj" ,"hat" ,"hau" ,"haw" ,"heb", "hil", "hin","hrv" ,"hun" ,"hye" ,"ibo" ,"iku" ,"ilo" ,"ind" ,"isl" ,"jac" ,"jav" ,"jpn" ,"kab" ,"kal" ,"kan" ,"kat" ,"kaz" ,"kek" ,"khm" ,"kik" ,"kin" ,"kir" ,"kom" ,"kor" ,"kur" ,"lad" ,"lao" ,"lat" ,"lav" ,"lez" ,"lij" ,"lin" ,"lit" ,"lmo" ,"ltz" ,"lug" ,"mal" ,"mam" ,"mar" ,"min" ,"mkd" ,"mlg" ,"mlt" ,"mon" ,"mri" ,"msa","mya" ,"mzn" ,"nah" ,"nap" ,"nav" ,"ndo" ,"nds" ,"nep" ,"new" ,"nld" ,"nno" ,"nob" ,"nor" ,"nya" ,"oci" ,"ori" ,"orm" ,"pam" ,"pan" ,"pdc" ,"pdt" ,"pms" ,"pol" ,"por" ,"ppl" ,"pus" ,"quc" ,"que" ,"roh" ,"ron" ,"rus" ,"scn" ,"sco" ,"sin" ,"slk" ,"slv" ,"sme" ,"smo" ,"sna" ,"snd" ,"som" ,"spa" ,"sqi" ,"srd" ,"srp" ,"sun" ,"swa" ,"swe" ,"tah" ,"tam" ,"tat" ,"tel" ,"tgk" ,"tgl" ,"tha" ,"tir" ,"ton" ,"tpi" ,"tsn" ,"tum" ,"tur" ,"twi" ,"udm" ,"uig" ,"ukr" ,"urd" ,"usp" ,"uzb" ,"vec" ,"ven" ,"vie" ,"vol" ,"war" ,"wln" ,"wol" ,"xal" ,"xho" ,"yid" ,"yor" ,"zh-yue" ,"zha" ,"zho" ,"zul" };
+    //private String[] LANGUAGES = {"afr", "bre", "bug", "cak", "ces",  "deu", "eng", "fin", "fra", "swe"};
+    private String[] languageList = {"afr", "deu"};
+    //private String[] LANGUAGES = {"abk", "afr", "aka", "amh", "amu", "ara", "arg", "asm", "ast", "awa", "aym" ,"aze" ,"bam" ,"bel" ,"ben" ,"bih" ,"bis" ,"bos" ,"bpy" ,"bre" ,"bug" ,"bul" ,"cak" ,"cat" ,"cco" ,"ceb" ,"ces" ,"cha" ,"che" ,"chr" ,"chv" ,"ckb" ,"cor" ,"cos" ,"crh" ,"cym" ,"dan" ,"deu" ,"div" ,"dzo","ell" ,"eml" ,"eng" ,"epo" ,"est" ,"eus" ,"ewe" ,"fao" ,"fas" ,"fij" ,"fin" ,"fra" ,"frp" ,"fry" ,"ful" ,"gla" ,"gle" ,"glg" ,"glv" ,"grn" ,"guj" ,"hat" ,"hau" ,"haw" ,"heb", "hil", "hin","hrv" ,"hun" ,"hye" ,"ibo" ,"iku" ,"ilo" ,"ind" ,"isl" ,"jac" ,"jav" ,"jpn" ,"kab" ,"kal" ,"kan" ,"kat" ,"kaz" ,"kek" ,"khm" ,"kik" ,"kin" ,"kir" ,"kom" ,"kor" ,"kur" ,"lad" ,"lao" ,"lat" ,"lav" ,"lez" ,"lij" ,"lin" ,"lit" ,"lmo" ,"ltz" ,"lug" ,"mal" ,"mam" ,"mar" ,"min" ,"mkd" ,"mlg" ,"mlt" ,"mon" ,"mri" ,"msa","mya" ,"mzn" ,"nah" ,"nap" ,"nav" ,"ndo" ,"nds" ,"nep" ,"new" ,"nld" ,"nno" ,"nob" ,"nor" ,"nya" ,"oci" ,"ori" ,"orm" ,"pam" ,"pan" ,"pdc" ,"pdt" ,"pms" ,"pol" ,"por" ,"ppl" ,"pus" ,"quc" ,"que" ,"roh" ,"ron" ,"rus" ,"scn" ,"sco" ,"sin" ,"slk" ,"slv" ,"sme" ,"smo" ,"sna" ,"snd" ,"som" ,"spa" ,"sqi" ,"srd" ,"srp" ,"sun" ,"swa" ,"swe" ,"tah" ,"tam" ,"tat" ,"tel" ,"tgk" ,"tgl" ,"tha" ,"tir" ,"ton" ,"tpi" ,"tsn" ,"tum" ,"tur" ,"twi" ,"udm" ,"uig" ,"ukr" ,"urd" ,"usp" ,"uzb" ,"vec" ,"ven" ,"vie" ,"vol" ,"war" ,"wln" ,"wol" ,"xal" ,"xho" ,"yid" ,"yor" ,"zh-yue" ,"zha" ,"zho" ,"zul" };
+    private String[] languages;
     private HashMap<String, Integer> languageToIndMap;
     private char[] uniqueChars;
     private HashMap<Character, Integer> charToIndMap;
@@ -32,8 +33,8 @@ public class DataSetIterator {
     private int examplesSoFar = 0;
     private int currLanguageInd = 0;
     private Random rng;
-    HashMap<String, ArrayList<String>> trainingData;
-    HashMap<String, ArrayList<String>> devData;
+    private HashMap<String, ArrayList<String>> trainingData;
+    private HashMap<String, ArrayList<String>> devData;
 
 
     public DataSetIterator (int exampleLength, int miniBatchSize, int numExamplesToFetch, Random rng) {
@@ -42,18 +43,52 @@ public class DataSetIterator {
         this.numExamplesToFetch = numExamplesToFetch;
         this.rng = rng;
         languageToIndMap = new HashMap<>();
-        for (int i = 0; i < languages.length; i++) languageToIndMap.put(languages[i], i);
-        MapCreator createUniqueChars = new MapCreator();
-        String[] filenames = new String[languages.length];
-        for (int i = 0; i < languages.length; i++) filenames[i] = languages[i] + ".txt";
-//        charToIndMap = createUniqueChars.createUniqueCharacterMap(FilePaths.DATA_PATH, filenames);
-        charToIndMap = createUniqueChars.createUniqueCharacterMap(FilePaths.DATA_PATH, languages);
+        languages = new String[languageList.length];
+        for (int i = 0; i < languageList.length; i++) {
+            languages[i] = languageList[i];
+            languageToIndMap.put(languages[i], i);
+        }
+        initializeUniqueCharMap();
         uniqueChars = new char[charToIndMap.size()];
         for (char c: charToIndMap.keySet()) uniqueChars[charToIndMap.get(c)] = c;
         ReadData reader = new ReadData();
         trainingData = reader.getInputSentences("_train");
         devData = reader.getInputSentences("_dev");
     }
+
+    public DataSetIterator (int exampleLength, int miniBatchSize, int numExamplesToFetch, Random rng, String trainFilename, String testFilename, String group) {
+        this.exampleLength = exampleLength;
+        this.miniBatchSize = miniBatchSize;
+        this.numExamplesToFetch = numExamplesToFetch;
+        this.rng = rng;
+        initializeUniqueCharMap(trainFilename, group);
+        uniqueChars = new char[charToIndMap.size()];
+        for (char c: charToIndMap.keySet()) uniqueChars[charToIndMap.get(c)] = c;
+        DSLReader reader = new DSLReader();
+        trainingData = reader.readInData(trainFilename, group);
+        devData = reader.readInData(testFilename, group);
+        languages = new String[trainingData.keySet().size()];
+        int i = 0;
+        for (String lang: trainingData.keySet()) {
+            languages[i] = lang;
+            i++;
+        }
+        languageToIndMap = new HashMap<>();
+        for (int j = 0; j < languages.length; j++) languageToIndMap.put(languages[j], j);
+    }
+
+    private void initializeUniqueCharMap(String filename, String group) {
+        MapCreator createUniqueChars = new MapCreator();
+        charToIndMap = createUniqueChars.createUniqueCharacterMap(filename, group);
+    }
+
+    private void initializeUniqueCharMap() {
+        MapCreator createUniqueChars = new MapCreator();
+        String[] filenames = new String[languages.length];
+        for (int i = 0; i < languages.length; i++) filenames[i] = languages[i] + ".txt";
+        charToIndMap = createUniqueChars.createUniqueCharacterMap(FilePaths.DATA_PATH, languages);
+    }
+
 
     //public boolean hasNext() {
        // return examplesSoFar + miniBatchSize <= numExamplesToFetch;
@@ -70,8 +105,8 @@ public class DataSetIterator {
         INDArray labels = Nd4j.zeros(new int[]{num, languages.length, exampleLength});
 
         for (int i = 0; i < num; i++) {
-            labels.putScalar(new int[]{i, currLanguageInd, 0}, 1.0);
-            //labels.putRow(i, getLanguageVector(currLanguageInd, exampleLength));
+            //labels.putScalar(new int[]{i, currLanguageInd, exampleLength - 1}, 1.0);
+            labels.putRow(i, getLanguageVector(currLanguageInd, exampleLength));
             String sentence = getRandomSentence(getLanguageByIndex(currLanguageInd), "train").getSecond();
             input.putRow(i, getFeatureVector(sentence, exampleLength));
             incrementLangaugeInd(); //just take one example of each language, then move on to next language
@@ -141,16 +176,16 @@ public class DataSetIterator {
     }
 
     public Pair<String, String> getRandomSentence(String language, String dataTyp) {
-        Language l = new Language(language);
+        //Language l = new Language(language);
         HashMap<String, ArrayList<String>> data;
         if (dataTyp.equals("train")) data = trainingData;
         else data = devData;
-        ArrayList<String> list = new ArrayList<>();
-        for (String ll: data.keySet()) {
+        ArrayList<String> list = data.get(language);
+        /*for (String ll: data.keySet()) {
             if (ll.equals(l)) {
                 list = data.get(ll);
             }
-        }
+        }*/
         int randSentence = rng.nextInt(list.size());
         String sent = list.get(randSentence);
         return new Pair<String, String>(language, sent);

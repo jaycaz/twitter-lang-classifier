@@ -1,26 +1,7 @@
 package tester;
 
-<<<<<<< HEAD
-=======
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import dataReader.TwitterDataSimulator;
-import edu.stanford.nlp.stats.ClassicCounter;
-import edu.stanford.nlp.stats.Counters;
-import edu.stanford.nlp.util.Pair;
-import scala.Int;
-import util.Language;
-import classifier.BaselineClassifier;
->>>>>>> origin/master
 import classifier.NGramClassifier;
 import dataReader.ReadData;
-import dataReader.TwitterDataSimulator;
-import util.Language;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
