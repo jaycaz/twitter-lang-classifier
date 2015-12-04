@@ -34,7 +34,7 @@ public class DSLReader {
             //int index = 0;
             while ((line = br.readLine()) != null) {
                 //index++;
-                //if (index%max > 10) continue;
+                //if (index%max > 100) continue;
                 String[] tokens = line.split("\t");
                 if (tokens[1].equals(group)) {
                     ArrayList<String> list = new ArrayList<>();

@@ -46,7 +46,7 @@ public class RNN {
         int miniBatchSize = 100;						//Size of mini batch to use when  training
         int examplesPerEpoch = 50*miniBatchSize;	//i.e., how many examples to learn on between generating samples
         int exampleLength = 100;					//Length of each training example
-        int numEpochs = 100;							//Total number of training + sample generation epochs
+        int numEpochs = 30;							//Total number of training + sample generation epochs
         int nSamplesToGenerate = 50;					//Number of samples to generate after each training epoch
         Random rng = new Random(12345);
 
@@ -57,7 +57,7 @@ public class RNN {
 
         //Set up network configuration:
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT).iterations(10)
+                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT).iterations(20)
                 .learningRate(0.1)
                 .rmsDecay(0.95)
                 .seed(12345)
@@ -111,8 +111,8 @@ public class RNN {
             System.out.println("----- Error " + ((float) error)/total + " -----");
             iter.reset();	//Reset iterator for another epoch
         }
-        saveModel("", net);
-        loadModel("", net);
+        System.out.println("\n\nSaving model...");
+        saveModel("RNN", net);
         System.out.println("\n\nExample complete");
     }
 
@@ -136,9 +136,6 @@ public class RNN {
             INDArray output = net.rnnTimeStep(input);
             //INDArray out1 = net.output(input);
             INDArray out2 = output.tensorAlongDimension(output.size(2)-1,1,0);
-            //INDArray out3 = out1.tensorAlongDimension(out1.size(2)-1,1,0);
-            //gold.putRow(i, iter.getLanguageVector(ex.getFirst(), charactersToSample));
-            //allOuts.putRow(i, output);
             int maxInd = -1;
             int maxInd2 = -1;
             double max = Double.MIN_VALUE;
@@ -180,34 +177,33 @@ public class RNN {
             locTotal++;
         }
         System.out.println("----- current error " + ((float) locError)/locTotal + " -----");
-        //System.out.println("----- current accuracy with last" + ((float) locError2)/locTotal + " -----");
+        System.out.println("----- current error with last" + ((float) locError2)/locTotal + " -----");
         return out;
     }
 
-    public static void saveModel(String filename, MultiLayerNetwork net) {
+    public static void saveModel(String pathname, MultiLayerNetwork net) {
         try {
-            OutputStream fos = Files.newOutputStream(Paths.get("coefficients.bin"));
+            OutputStream fos = Files.newOutputStream(Paths.get(pathname + "/coefficients.bin"));
             DataOutputStream dos = new DataOutputStream(fos);
             Nd4j.write(net.params(), dos);
             dos.flush();
             dos.close();
-            FileUtils.write(new File("conf.json"), net.getLayerWiseConfigurations().toJson());
+            FileUtils.write(new File(pathname + "/conf.json"), net.getLayerWiseConfigurations().toJson());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static MultiLayerNetwork loadModel(String pathname, MultiLayerNetwork model) {
+    public static MultiLayerNetwork loadModel(String pathname) {
         try {
             MultiLayerConfiguration confFromJson = MultiLayerConfiguration.fromJson(FileUtils.readFileToString(new File("conf.json")));
-            DataInputStream dis = new DataInputStream(new FileInputStream("coefficients.bin"));
+            DataInputStream dis = new DataInputStream(new FileInputStream(pathname + "/coefficients.bin"));
             INDArray newParams = Nd4j.read(dis);
             dis.close();
             MultiLayerNetwork savedNetwork = new MultiLayerNetwork(confFromJson);
             savedNetwork.init();
             savedNetwork.setParameters(newParams);
-            System.out.println("Original network params " + model.params());
-            System.out.println(savedNetwork.params());
+            System.out.println("Parameters of loaded model: " + savedNetwork.params());
             return savedNetwork;
         } catch (IOException e) {
             e.printStackTrace();

@@ -36,7 +36,11 @@ public class NGramClassifier extends Classifier {
 		}
 	}
 
-
+	/**
+	 *
+	 * @param sentence
+	 * @return predicted label
+     */
 	public String classify(String sentence) {
 		ClassicCounter<String> nGrams = new ClassicCounter<String>();
 		nGrams = nGramExtractor.getFeatures(sentence, nGrams, nGramMin, nGramMax);
