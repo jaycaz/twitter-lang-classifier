@@ -1,6 +1,6 @@
 package tester;
 
-import classifier.TwitterNGramClassifier;
+import classifier.NGramClassifier;
 import dataReader.ReadData;
 
 import java.util.ArrayList;
@@ -15,7 +15,28 @@ public class TwitterTest {
 //        sp.splitFile("data/twitter_data_labled.tsv");
 
         ReadData reader = new ReadData();
-        TwitterNGramClassifier classifier = new TwitterNGramClassifier();
+        NGramClassifier classifier = new NGramClassifier();
+        HashMap<String, ArrayList<String>> TrainingData;
+
+
+        while((TrainingData = reader.getNextTweets("data/twitter_train.txt"))!= null){
+            classifier.train(TrainingData);
+        }
+
+        HashMap<String, ArrayList<String>> testData;
+        double sum=0, count=0;
+        while((testData = reader.getNextTweets("data/twitter_test.txt"))!= null){
+            if(testData.size() == 0)
+                continue;
+            sum+=classifier.accuracy(testData);
+            count+=1;
+        }
+        System.out.println(sum/count);
+
+
+
+
+/*        TwitterNGramClassifier classifier = new TwitterNGramClassifier();
 
         HashMap<String, ArrayList<String>> TrainingData;
         classifier.train(reader, "data/twitter_train.txt");
@@ -26,9 +47,19 @@ public class TwitterTest {
             classifier.accuracy(testData);
         }
         double taccuracy = classifier.getAccuracy();
-        System.out.println("Acccuracy on test: " + taccuracy);
+        System.out.println("Acccuracy on test: " + taccuracy);*/
 
+     /*   try {
+            BufferedReader br = new BufferedReader(new FileReader("test.txt"));
+            String s = br.readLine();
+            System.out.println(s );
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+*/
+    }
 
 
 }
