@@ -10,25 +10,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Created by martina on 11/21/15.
+ * Author: Martina Marek
+ *
+ *
  */
 public class MapCreator {
 
     static final String INVALID_CHARACTERS = ".,;:!%#|{}()&^%$@?+=”•’»[]_*+\\/-\"…–—“„0123456789'";
 
     /**
-     * Creates a unique map for characters
-     * @param path
-     * @param files
-     * @return
+     * Creates a map that maps all unique characters in the given files to an index
+     *
+     * Takes only characters into account that appear at least 1000 times in a document to sort out noise.
+     * Does not take special characters or numbers into account (ignores any character out of this list:
+     * ".,;:!%#|{}()&^%$@?+=”•’»[]_*+\\/-\"…–—“„0123456789'").
+     *
+     * @param path: where the files are located
+     * @param files: array list of strings with all filenames
+     * @return map that maps each unique character to an index
      */
     public HashMap<Character, Integer> createUniqueCharacterMap (String path, String[] files) {
         IntCounter<Character> counter = new IntCounter<>();
         HashMap<Character, Integer> charMap = new HashMap<Character, Integer>();
         for (String file: files) {
             try {
-//                FileInputStream input = new FileInputStream(path + file);
-//                BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8));
                 BufferedReader reader = ReadData.getLangReader(file);
                 String line = null;
                 while((line = reader.readLine()) != null) {
@@ -56,6 +61,13 @@ public class MapCreator {
         return charMap;
     }
 
+    /**
+     * Creates a map that maps all unique characters in a DSL shared task file to an index
+     *
+     * @param filename of the DSL shared task file
+     * @param group: array list of strings with all filenames
+     * @return map that maps each unique character to an index
+     */
     public HashMap<Character, Integer> createUniqueCharacterMap (String filename, String group) {
         IntCounter<Character> counter = new IntCounter<>();
         HashMap<Character, Integer> charMap = new HashMap<Character, Integer>();
@@ -75,6 +87,12 @@ public class MapCreator {
         return charMap;
     }
 
+    /**
+     * Loads a previously saved map of characters to indices
+     *
+     * @param filename
+     * @return
+     */
     public HashMap<Character, Integer> createUniqueCharacterMapFromFile (String filename) {
         HashMap<Character, Integer> charMap = new HashMap<Character, Integer>();
         try {
@@ -98,6 +116,12 @@ public class MapCreator {
         return charMap;
     }
 
+    /**
+     * Writes a map of characters to index to the file specified
+     *
+     * @param filename
+     * @param map
+     */
     public void saveMapToFile(String filename, HashMap<Character, Integer> map) {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));

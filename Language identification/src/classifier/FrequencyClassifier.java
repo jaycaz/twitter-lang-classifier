@@ -2,27 +2,49 @@ package classifier;
 
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.IntCounter;
-import util.Language;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Author: Martina Marek
+ *
+ * Classifier that saves the most frequent words of each language and classifies a sentence based on that.
+ */
 
 public class FrequencyClassifier extends Classifier {
 	HashMap<String, ArrayList<String>> mostFrequentWords;
-	int numWords = 100;
+	int numWords;
 
-	// Find most frequent word for every language
+
+	/**
+	 * Constructs a FrequencyClassifier with the most frequent words specified numWords
+	 *
+	 * @param numWords
+     */
+	public FrequencyClassifier (int numWords) {
+		this.numWords = numWords;
+	}
+
+	/**
+	 * Constructs a FrequencyClassifier with the 100 most frequent words
+	 */
+	public FrequencyClassifier () {
+		this(100);
+	}
+
+
+	/**
+	 *
+	 * @param trainingData
+     */
 	public void train(HashMap<String, ArrayList<String>> trainingData) {
 		mostFrequentWords = new HashMap<String, ArrayList<String>> ();
-
 		for(String language : trainingData.keySet()) {
 			IntCounter<String> wordCounts = new IntCounter<String>();
-
 			for(String paragraph : trainingData.get(language)) {
 				for(String word : paragraph.split(" ")) {
-					// Add word to word counts
 					wordCounts.incrementCount(word, 1);
 				}
 			}
@@ -33,10 +55,14 @@ public class FrequencyClassifier extends Classifier {
 			} else {
 				mostFrequentWords.put(language, (ArrayList<String>) allWords);	
 			}
-			//System.out.println("Language: " + language + " max Word: " + maxWord);
 		}
 	}
-	
+
+	/**
+	 *
+	 * @param sentence to classify
+	 * @return label
+     */
 	public String classify(String sentence) {
 		IntCounter<String> languageCounts = new IntCounter();
 		for (String word: sentence.split(" ")) {

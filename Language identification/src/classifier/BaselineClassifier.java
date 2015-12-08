@@ -2,14 +2,25 @@ package classifier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import util.Language;
+
+/**
+ * Author: Martina Marek
+ *
+ * Simple baseline that saves the most frequent word of each language and classifies a sentence based on that.
+ */
 
 public class BaselineClassifier extends Classifier {
 	HashMap<String, String> mostFrequentWords;
 
-	// Find most frequent word for every language
-	public void train(HashMap<String, ArrayList<String>> trainingData) {
+	public BaselineClassifier() {
 		mostFrequentWords = new HashMap<String, String> ();
+	}
+
+	/**
+	 *
+	 * @param trainingData
+     */
+	public void train(HashMap<String, ArrayList<String>> trainingData) {
 		for(String language : trainingData.keySet()) {
 			HashMap<String, Integer> wordCounts = new HashMap<String, Integer>();
 			String maxWord = "";
@@ -33,10 +44,14 @@ public class BaselineClassifier extends Classifier {
 				}
 			}
 			mostFrequentWords.put(language, maxWord);
-			//System.out.println("String: " + language + " max Word: " + maxWord);
 		}
 	}
-	
+
+	/**
+	 *
+	 * @param sentence
+	 * @return label
+     */
 	public String classify(String sentence) {
 		for (String key: mostFrequentWords.keySet()) {
 			if (sentence.contains(mostFrequentWords.get(key))) {

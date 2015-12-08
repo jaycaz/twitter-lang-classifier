@@ -1,13 +1,13 @@
 package dataReader;
 
-import util.Language;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
 /**
- * Created by martina on 11/18/15.
+ * Author: Martina Marek
+ *
+ * From a list of input sentences, creates test sentences of specific length.
  */
 public class TwitterDataSimulator {
 
@@ -18,6 +18,13 @@ public class TwitterDataSimulator {
         testData = reader.getInputSentences("_test");
     }
 
+    /**
+     * Splits the test data up in sentences in the specified range of lengths.
+     *
+     * @param minLength
+     * @param maxLength
+     * @return test data with shortened sentences
+     */
     public HashMap<String, ArrayList<String>> getTestingData(int minLength, int maxLength) {
         HashMap<String, ArrayList<String>> shortSentences = new HashMap<String, ArrayList<String>>();
         Random rn = new Random();

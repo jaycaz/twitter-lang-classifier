@@ -42,11 +42,11 @@ public class RNN {
 
 
     public static void main( String[] args ) throws Exception {
-        int lstmLayerSize = 100;					//Number of units in each GravesLSTM layer
-        int miniBatchSize = 100;						//Size of mini batch to use when  training
+        int lstmLayerSize = 50;					//Number of units in each GravesLSTM layer
+        int miniBatchSize = 10;						//Size of mini batch to use when  training
         int examplesPerEpoch = 50*miniBatchSize;	//i.e., how many examples to learn on between generating samples
         int exampleLength = 100;					//Length of each training example
-        int numEpochs = 30;							//Total number of training + sample generation epochs
+        int numEpochs = 50;							//Total number of training + sample generation epochs
         int nSamplesToGenerate = 50;					//Number of samples to generate after each training epoch
         Random rng = new Random(12345);
 
@@ -55,10 +55,11 @@ public class RNN {
         DataSetIterator iter = new DataSetIterator(exampleLength, miniBatchSize, examplesPerEpoch, new Random(12345), "DSLCC/train.txt", "DSLCC/devel.txt", "A");
         int nOut = iter.totalOutcomes();
 
+        /*
         //Set up network configuration:
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT).iterations(20)
-                .learningRate(0.1)
+                .learningRate(0.01)
                 .rmsDecay(0.95)
                 .seed(12345)
                 .regularization(true)
@@ -80,10 +81,14 @@ public class RNN {
                 .build();
 
         MultiLayerNetwork net = new MultiLayerNetwork(conf);
+
+
         net.init();
-        net.setListeners(new ScoreIterationListener(10));
+        net.setListeners(new ScoreIterationListener(10));*/
         //net.setListeners(new NeuralNetPlotterIterationListener (1));
         //net.setListeners(new Collection<IterationListener>(new ScoreIterationListener(10), new NeuralNetPlotterIterationListener(1, true)));
+
+        MultiLayerNetwork net = loadModel("RNN");
 
         //Print the  number of parameters in the network (and for each layer)
         Layer[] layers = net.getLayers();
@@ -113,19 +118,17 @@ public class RNN {
         }
         System.out.println("\n\nSaving model...");
         saveModel("RNN", net);
+
+
+        //String[] samples = sampleLanguages(net,iter,rng,exampleLength,nSamplesToGenerate);
         System.out.println("\n\nExample complete");
     }
 
 
     private static String[] sampleLanguages(MultiLayerNetwork net,
                                                          DataSetIterator iter, Random rng, int charactersToSample, int numSamples ){
-        //Create input for initialization
-
         String[] labels = new String[numSamples];
         String[] predicted = new String[numSamples];
-        String[] predicted1 = new String[numSamples];
-        //INDArray gold = Nd4j.zeros(new int[]{numSamples, iter.totalOutcomes(), charactersToSample});
-        //INDArray allOuts = Nd4j.zeros(new int[]{numSamples, iter.totalOutcomes(), charactersToSample};
 
         for (int i = 0; i < numSamples; i++) {
             Pair<String, String> ex = iter.getRandomSentence("train");
@@ -135,33 +138,22 @@ public class RNN {
             net.rnnClearPreviousState();
             INDArray output = net.rnnTimeStep(input);
             //INDArray out1 = net.output(input);
-            INDArray out2 = output.tensorAlongDimension(output.size(2)-1,1,0);
             int maxInd = -1;
-            int maxInd2 = -1;
             double max = Double.MIN_VALUE;
-            double max2 = Double.MIN_VALUE;
             for (int k = 0; k < output.length(); k++) {
                 if (output.getDouble(k) > max) {
                     max = output.getDouble(k);
                     maxInd = k;
                 }
             }
-            for (int j = 0; j < out2.length(); j++) {
-                if (out2.getDouble(j) > max2) {
-                    max2 = out2.getDouble(j);
-                    maxInd2 = j;
-                }
-            }
             int index = maxInd/ex.getSecond().length();
             predicted[i] = iter.getLanguageByIndex(index);
-            predicted1[i] = iter.getLanguageByIndex(maxInd2);
         }
         //Evaluation eval = new Evaluation();
         //eval.eval(gold, allOuts);
         //log.info(eval.stats());
 
         int locError = 0;
-        int locError2 = 0;
         int locTotal = 0;
         String[] out = new String[numSamples];
         for( int i=0; i<numSamples; i++ ) {
@@ -170,14 +162,10 @@ public class RNN {
                 locError++;
                 error++;
             }
-            if (labels[i] != predicted1[i]) {
-                locError2++;
-            }
             total++;
             locTotal++;
         }
         System.out.println("----- current error " + ((float) locError)/locTotal + " -----");
-        System.out.println("----- current error with last" + ((float) locError2)/locTotal + " -----");
         return out;
     }
 
@@ -196,7 +184,7 @@ public class RNN {
 
     public static MultiLayerNetwork loadModel(String pathname) {
         try {
-            MultiLayerConfiguration confFromJson = MultiLayerConfiguration.fromJson(FileUtils.readFileToString(new File("conf.json")));
+            MultiLayerConfiguration confFromJson = MultiLayerConfiguration.fromJson(FileUtils.readFileToString(new File(pathname + "/conf.json")));
             DataInputStream dis = new DataInputStream(new FileInputStream(pathname + "/coefficients.bin"));
             INDArray newParams = Nd4j.read(dis);
             dis.close();

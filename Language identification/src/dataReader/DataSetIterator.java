@@ -14,9 +14,10 @@ import java.util.NoSuchElementException;
 import java.util.Random;
 
 /**
- * Created by martina on 11/27/15.
+ * Author: Martina Marek
  *
- * source: CharacterIterator from DeepLearning4j: http://deeplearning4j.org/recurrentnetwork.html
+ * source: CharacterIterator from DeepLearning4j: http://deeplearning4j.org/recurrentnetwork.html, modified to fit our data
+ * and our model
  */
 public class DataSetIterator {
 
@@ -169,23 +170,31 @@ public class DataSetIterator {
         examplesSoFar = 0;
     }
 
+
+    /**
+     * Returns a random sentence from the specified data set
+     *
+     * @param dataTyp: either "train" or "test", depending which data set should be used
+     * @return randomly selected sentence
+     */
     public Pair<String, String> getRandomSentence(String dataTyp) {
         int randLang = rng.nextInt(languages.length);
         String lang = languages[randLang];
         return getRandomSentence(lang, dataTyp);
     }
 
+    /**
+     * Returns a random sentence from the specified language
+     *
+     * @param language
+     * @param dataTyp: either "train" or "test", depending which data set should be used
+     * @return randomly selected sentence
+     */
     public Pair<String, String> getRandomSentence(String language, String dataTyp) {
-        //Language l = new Language(language);
         HashMap<String, ArrayList<String>> data;
         if (dataTyp.equals("train")) data = trainingData;
         else data = devData;
         ArrayList<String> list = data.get(language);
-        /*for (String ll: data.keySet()) {
-            if (ll.equals(l)) {
-                list = data.get(ll);
-            }
-        }*/
         int randSentence = rng.nextInt(list.size());
         String sent = list.get(randSentence);
         return new Pair<String, String>(language, sent);

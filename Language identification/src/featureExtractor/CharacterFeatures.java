@@ -1,6 +1,5 @@
 package featureExtractor;
 
-import java.util.*;
 
 /**
  * Created by martina on 11/20/15.

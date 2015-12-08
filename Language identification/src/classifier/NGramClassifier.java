@@ -5,26 +5,52 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.stats.IntCounter;
 import featureExtractor.NGramFeatures;
 import util.Language;
 
+/**
+ * Author: Martina Marek
+ *
+ * Bayes classifier that takes n-gram features.
+ */
+
 public class NGramClassifier extends Classifier {
 	private HashMap<String, ClassicCounter<String>> nGramProb;
+	private HashMap<String, ClassicCounter<String>> nGramProbReduced;
 	private NGramFeatures nGramExtractor;
-	private int nGramMax = 5;
-	private int nGramMin = 5;
-	
-	private int topCounts = 5000;
-	private double minProb = 1/((double) topCounts * 1000);
+	private int nGramMax;
+	private int nGramMin;
+	private int topCounts;
+	private int topCountsReduced;
+	private double minProb;
 
 
-	public void train(
-			HashMap<String, ArrayList<String>> trainingData) {
+	public NGramClassifier(int nGramMin, int nGramMax, int topCounts, int topCountsReduced) {
 		nGramProb = new HashMap<>();
+		nGramProbReduced = new HashMap<>();
 		nGramExtractor = new NGramFeatures();
+		this.nGramMax = nGramMax;
+		this.nGramMin = nGramMin;
+		this.topCounts = topCounts;
+		this.topCountsReduced = topCountsReduced;
+		minProb = 1/((double) topCounts * 1000);
+	}
+
+	public NGramClassifier() {
+		this(5, 5, 100, 100);
+	}
+
+
+	/**
+	 * Trains a Bayes Classifier that uses n-Gram features
+	 *
+	 * @param trainingData
+     */
+	public void train(HashMap<String, ArrayList<String>> trainingData) {
 		for(String language: trainingData.keySet()) {
 			ClassicCounter<String> features = new ClassicCounter<>();
 			for (String sentence: trainingData.get(language)) {
@@ -33,20 +59,31 @@ public class NGramClassifier extends Classifier {
 			Counters.retainTop(features, topCounts);
 			Counters.normalize(features);
 			nGramProb.put(language, features);
+			Counter<String> featuresReduced = Counters.getCopy(features);
+			Counters.retainTop(featuresReduced, topCountsReduced);
+			Counters.normalize(featuresReduced);
+			nGramProbReduced.put(language, (ClassicCounter<String>) featuresReduced);
 		}
 	}
 
 	/**
 	 *
 	 * @param sentence
+	 * @param beamSearch: whether to use a beam search
 	 * @return predicted label
      */
-	public String classify(String sentence) {
+	public String classify(String sentence, boolean beamSearch, int beamSize) {
 		ClassicCounter<String> nGrams = new ClassicCounter<String>();
 		nGrams = nGramExtractor.getFeatures(sentence, nGrams, nGramMin, nGramMax);
+		ArrayList<String> languages = new ArrayList<>();
+		if (beamSearch) {
+			languages = classifyTop(nGrams, beamSize);
+		} else {
+			languages.addAll(nGramProb.keySet());
+		}
 		double maxProb = Double.NEGATIVE_INFINITY;
 		String maxLang = null;
-		for (String lang: nGramProb.keySet()) {
+		for (String lang: languages) {
 			double prob = 0.0;
 			ClassicCounter<String> langCounts = nGramProb.get(lang);
 			for (String s: nGrams.keySet()) {
@@ -64,6 +101,36 @@ public class NGramClassifier extends Classifier {
 		}
 		if (maxLang == null) return "UNKNOWN";
 		return maxLang;
+	}
+
+	private ArrayList<String> classifyTop(ClassicCounter<String> nGrams, int n) {
+		ClassicCounter<String> performance = new ClassicCounter<>();
+		for (String lang: nGramProbReduced.keySet()) {
+			double prob = 0.0;
+			ClassicCounter<String> langCounts = nGramProbReduced.get(lang);
+			for (String s: nGrams.keySet()) {
+				double p = langCounts.getCount(s);
+				if (p == 0) {
+					prob = prob + Math.log(minProb) * nGrams.getCount(s);
+				} else {
+					prob = prob + Math.log(p) * nGrams.getCount(s);
+				}
+			}
+			performance.incrementCount(lang, prob);
+		}
+		Counters.retainTop(performance, n);
+		ArrayList<String> topLabels = new ArrayList<>();
+		for (String l: performance) topLabels.add(l);
+		return topLabels;
+	}
+
+	/**
+	 *
+	 * @param sentence
+	 * @return predicted label
+	 */
+	public String classify(String sentence) {
+		return classify(sentence, false, 1);
 	}
 	
 	public String classifyByCounts(String sentence) {

@@ -26,7 +26,7 @@ public class ReadData {
     public static final String DATA_PATH =  "data/" ; //FilePaths.DATA_PATH;
     public static final String EXTENSION = ".txt";
     public static final String ZIP_EXTENSION = ".txt.zip";
-    static int num_paragraphs = 0, maxParagraphs = 1000;
+    static int num_paragraphs = 0, maxParagraphs = 10000;
 
     public static final String TRAIN = "_train";
     public static final String TEST = "_test";

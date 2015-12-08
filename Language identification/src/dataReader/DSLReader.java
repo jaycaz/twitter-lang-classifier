@@ -25,16 +25,16 @@ public class DSLReader {
 
     public static HashMap<String, ArrayList<String>> readInData(String filename, String group) {
         HashMap<String, ArrayList<String>> data = new HashMap<>();
-        //int max;
-        //if (filename.contains("train")) max = 18000;
-        //else max = 2000;
+        int max;
+        if (filename.contains("train")) max = 18000;
+        else max = 2000;
         try {
             BufferedReader br = new BufferedReader(new FileReader(filename));
             String line;
-            //int index = 0;
+            int index = 0;
             while ((line = br.readLine()) != null) {
-                //index++;
-                //if (index%max > 100) continue;
+                index++;
+                if (index%max > 100) continue;
                 String[] tokens = line.split("\t");
                 if (tokens[1].equals(group)) {
                     ArrayList<String> list = new ArrayList<>();

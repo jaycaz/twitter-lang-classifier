@@ -9,10 +9,19 @@ import edu.stanford.nlp.util.Pair;
 
 
 /**
- * Created by martina on 11/30/15.
+ * Author: Martina Marek
+ *
+ * Class that implements various evaluation metrics.
  */
 public class Evaluator {
 
+    /**
+     * Given a list of guessed labels and the real labels, returns the overall accuracy.
+     *
+     * @param guesses
+     * @param gold
+     * @return accuracy
+     */
     public double accuracy (String[] guesses, String[] gold) {
         assert guesses.length == gold.length : "Length of the guesses and real labels differ - aborted";
         int error = 0;
@@ -24,6 +33,13 @@ public class Evaluator {
         return (total - error) / (float) total;
     }
 
+    /**
+     * Given a list of guessed labels and the real labels, returns the accuracy for each class
+     *
+     * @param guesses
+     * @param gold
+     * @return Counter with accuracy for each label
+     */
     public ClassicCounter<String> accuracyByClass (String[] guesses, String[] gold) {
         assert guesses.length == gold.length : "Length of the guesses and real labels differ - aborted";
         ClassicCounter<String> classAccuracy = new ClassicCounter<>();
@@ -47,7 +63,27 @@ public class Evaluator {
         return classAccuracy;
     }
 
-    public ClassicCounter<String> f1ByClass(String[] guesses, String[] gold, boolean printConfusionMatrix) {
+    /**
+     * Given a list of guessed labels and the real labels, returns the overall F1 and F1 by class.
+     *
+     * @param guesses
+     * @param gold
+     * @return Counter with F1 for each label and overall F1
+     */
+    public ClassicCounter<String> f1ByClass(String[] guesses, String[] gold) {
+        return f1ByClass(guesses, gold, false, "");
+    }
+
+    /**
+     * Given a list of guessed labels and the real labels, returns the overall F1 and F1 by class. If wanted, confusion matrix is printed.
+     *
+     * @param guesses
+     * @param gold
+     * @param printConfusionMatrix: if to print the confusion matrix
+     * @param filename: where to print the confusion matrix
+     * @return Counter with F1 for each label and overall F1
+     */
+    public ClassicCounter<String> f1ByClass(String[] guesses, String[] gold, boolean printConfusionMatrix, String filename) {
         assert guesses.length == gold.length : "Length of the guesses and real labels differ - aborted";
         HashMap<String, Integer> labelInd = new HashMap<>();
         ArrayList<String> languages = new ArrayList<>();
@@ -94,14 +130,23 @@ public class Evaluator {
             total += f1;
             f1Scores.incrementCount(s, f1);
         }
-        if (printConfusionMatrix) printConfusionMatrix(confusionMatrix, labelInd, languages);
+        if (printConfusionMatrix) printConfusionMatrix(confusionMatrix, labelInd, languages, filename);
         f1Scores.incrementCount("total", total/f1Scores.size());
         return f1Scores;
     }
 
-    private void printConfusionMatrix(int[][] confusionMatrix, HashMap<String, Integer> labelInd, ArrayList<String> languages) {
+
+    /**
+     * Prints confusion matrix to the specified file.
+     *
+     * @param confusionMatrix
+     * @param labelInd
+     * @param languages
+     * @param filename
+     */
+    private void printConfusionMatrix(int[][] confusionMatrix, HashMap<String, Integer> labelInd, ArrayList<String> languages, String filename) {
         try {
-            BufferedWriter out = new BufferedWriter(new FileWriter("confusion Matrix.csv"));
+            BufferedWriter out = new BufferedWriter(new FileWriter(filename));
             String firstLine = "";
             String rest = "";
             for (int j = 0; j < labelInd.size(); j++) {

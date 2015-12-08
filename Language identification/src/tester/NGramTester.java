@@ -21,7 +21,10 @@ public class NGramTester {
         System.out.println("Finished Training. Now evaluating...!");
 
         HashMap<String, ArrayList<String>> testData = reader.getInputSentences("_test");
+        long startTime = System.nanoTime();
         System.out.print("Accuracy: " + classifier.accuracy(testData));
+        long estimatedTime = System.nanoTime() - startTime;
+        System.out.println("Total time for evaluation: " + estimatedTime);
         //classifier.writeAccuracyByClassSortedToFile("AccuracyByClassSorted.txt", testData);
         //TwitterDataSimulator twitterSim = new TwitterDataSimulator();
         //HashMap<Language, ArrayList<String>> testData = twitterSim.getTestingData(5, 10);
