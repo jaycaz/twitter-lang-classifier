@@ -1,8 +1,6 @@
-package tester;
-
-import classifier.NGramClassifierDistinct;
-import dataReader.ReadData;
-import util.Language;
+import org.classifier.NGramClassifierDistinct;
+import org.dataReader.ReadData;
+import org.util.Language;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,9 +36,9 @@ public class NGramTester_Distinct {
 
         double taccuracy = classifier.getAccuracy();
         System.out.println("Acccuracy on test: " + taccuracy);
-        //double tfscore = classifier.f1(testData);
+        //double tfscore = org.classifier.f1(testData);
         //System.out.println("F1: " + tfscore);
-        //classifier.f1ByClass(data);
+        //org.classifier.f1ByClass(data);
 
     }
 

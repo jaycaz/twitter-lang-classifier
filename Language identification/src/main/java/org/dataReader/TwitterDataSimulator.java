@@ -1,4 +1,4 @@
-package dataReader;
+package org.dataReader;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package dataReader;
+package org.dataReader;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;

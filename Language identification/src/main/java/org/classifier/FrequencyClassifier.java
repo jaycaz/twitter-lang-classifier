@@ -1,4 +1,4 @@
-package classifier;
+package org.classifier;
 
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.IntCounter;

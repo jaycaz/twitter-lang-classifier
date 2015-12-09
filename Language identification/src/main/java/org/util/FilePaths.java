@@ -1,6 +1,5 @@
-package util;
+package org.util;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -9,5 +8,5 @@ import java.nio.file.Paths;
 public class FilePaths {
 
     public static final String DATA_PATH = Paths.get("data").toAbsolutePath().toString();
-    public static final String UTIL_PATH = Paths.get("src/util").toAbsolutePath().toString();
+    public static final String UTIL_PATH = Paths.get("src/main/java/org/util").toAbsolutePath().toString();
 }

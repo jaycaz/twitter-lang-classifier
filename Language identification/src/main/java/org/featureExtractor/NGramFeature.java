@@ -1,4 +1,4 @@
-package featureExtractor;
+package org.featureExtractor;
 
 import edu.stanford.nlp.stats.ClassicCounter;
 

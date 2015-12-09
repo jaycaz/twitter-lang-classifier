@@ -1,4 +1,4 @@
-package classifier;
+package org.classifier;
 
 import java.util.ArrayList;
 import java.util.HashMap;

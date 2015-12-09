@@ -1,12 +1,11 @@
-package dataReader;
+package org.dataReader;
 
 import org.apache.commons.math3.util.Pair;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.factory.Nd4j;
-import util.FilePaths;
-import util.Language;
-import util.MapCreator;
+import org.util.FilePaths;
+import org.util.MapCreator;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package util;
+package org.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,13 +6,13 @@ import java.util.List;
 import java.io.*;
 import java.nio.file.*;
 
-/* class util.Language
+/* class org.util.Language
 
     Stores the language codes and plaintext language names
  */
 public class Language {
     // The name of the file to open.
-    //private static final Path filePath = Paths.get("src/util/language-table.txt");
+    //private static final Path filePath = Paths.get("src/org.util/language-table.txt");
     private static final Path filePath = Paths.get(FilePaths.UTIL_PATH, "language-table.txt");
 
     // Plaintext language name
@@ -43,7 +43,7 @@ public class Language {
         return allNames.get(codeIndex);
     }
 
-    // Before using util.Language class, populate global lists of names/codes
+    // Before using org.util.Language class, populate global lists of names/codes
     public static void init() {
         if(initialized)
             return;

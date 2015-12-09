@@ -1,7 +1,7 @@
-package util;
+package org.util;
 
-import dataReader.DSLReader;
-import dataReader.ReadData;
+import org.dataReader.DSLReader;
+import org.dataReader.ReadData;
 import edu.stanford.nlp.stats.IntCounter;
 
 import java.io.*;

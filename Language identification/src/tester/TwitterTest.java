@@ -1,7 +1,5 @@
-package tester;
-
-import classifier.NGramClassifier;
-import dataReader.ReadData;
+import org.classifier.NGramClassifier;
+import org.dataReader.ReadData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,17 +34,17 @@ public class TwitterTest {
 
 
 
-/*        TwitterNGramClassifier classifier = new TwitterNGramClassifier();
+/*        TwitterNGramClassifier org.classifier = new TwitterNGramClassifier();
 
         HashMap<String, ArrayList<String>> TrainingData;
-        classifier.train(reader, "data/twitter_train.txt");
+        org.classifier.train(reader, "data/twitter_train.txt");
 
         HashMap<String, ArrayList<String>> testData;
 
         while((testData = reader.getNextTweets("data/twitter_test.txt"))!= null){
-            classifier.accuracy(testData);
+            org.classifier.accuracy(testData);
         }
-        double taccuracy = classifier.getAccuracy();
+        double taccuracy = org.classifier.getAccuracy();
         System.out.println("Acccuracy on test: " + taccuracy);*/
 
      /*   try {

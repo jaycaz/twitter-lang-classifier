@@ -1,13 +1,12 @@
-package classifier;
+package org.classifier;
 
-import dataReader.ReadData;
+import org.dataReader.ReadData;
 import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.util.Pair;
-import featureExtractor.NGramFeature;
-import featureExtractor.NGramFeatures;
-import util.Evaluator;
-import util.Language;
+import org.featureExtractor.NGramFeatures;
+import org.util.Evaluator;
+import org.util.Language;
 
 import java.util.ArrayList;
 import java.util.HashMap;

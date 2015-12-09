@@ -1,6 +1,6 @@
-package featureExtractor;
+package org.featureExtractor;
 
-import util.Language;
+import org.util.Language;
 
 import java.util.ArrayList;
 import java.util.Arrays;

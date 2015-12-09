@@ -1,4 +1,4 @@
-package classifier;
+package org.classifier;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -10,12 +10,12 @@ import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.util.Pair;
 import org.apache.commons.lang.NotImplementedException;
-import util.Evaluator;
+import org.util.Evaluator;
 
 /**
  * Author: Martina Marek
  *
- * General classifier class that provides evaluation functions shared by all classifiers.
+ * General org.classifier class that provides evaluation functions shared by all classifiers.
  */
 
 public abstract class Classifier {

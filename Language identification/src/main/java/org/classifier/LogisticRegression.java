@@ -1,4 +1,4 @@
-package classifier;
+package org.classifier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,12 +10,12 @@ import edu.stanford.nlp.classify.LinearClassifierFactory;
 import edu.stanford.nlp.ling.RVFDatum;
 import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.stats.Counters;
-import featureExtractor.NGramFeatures;
+import org.featureExtractor.NGramFeatures;
 
 /**
  * Author: Martina Marek
  *
- * Logistic regression classifier that uses n-gram features for classification.
+ * Logistic regression org.classifier that uses n-gram features for classification.
  *
  */
 public class LogisticRegression extends Classifier {
@@ -25,7 +25,7 @@ public class LogisticRegression extends Classifier {
 	int nGram;
 
 	/**
-	 * Constructs a Logistic Regression classifier
+	 * Constructs a Logistic Regression org.classifier
 	 *
 	 * @param topCounts
 	 * @param nGram
@@ -37,7 +37,7 @@ public class LogisticRegression extends Classifier {
 	}
 
 	/**
-	 * Constructs a Logistic Regression classifier with 5-grams and the 5000 most frequent n-grams
+	 * Constructs a Logistic Regression org.classifier with 5-grams and the 5000 most frequent n-grams
 	 */
 	public LogisticRegression () {
 		this(1000, 5);
@@ -64,7 +64,7 @@ public class LogisticRegression extends Classifier {
 	}
 
 	/**
-	 * writes a trained classifier to a file
+	 * writes a trained org.classifier to a file
 	 *
 	 * @param filename: where to save the file
      */
@@ -73,9 +73,9 @@ public class LogisticRegression extends Classifier {
 	}
 
 	/**
-	 * loads a previously saved classifier
+	 * loads a previously saved org.classifier
 	 *
-	 * @param filename: location and name where the classifier is stored
+	 * @param filename: location and name where the org.classifier is stored
      */
 	public void loadClassifier(String filename) {
 		c = LinearClassifier.readClassifier(filename);

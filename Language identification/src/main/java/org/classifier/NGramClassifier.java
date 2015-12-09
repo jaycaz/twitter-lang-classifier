@@ -1,4 +1,4 @@
-package classifier;
+package org.classifier;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -9,12 +9,12 @@ import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.stats.IntCounter;
-import featureExtractor.NGramFeatures;
+import org.featureExtractor.NGramFeatures;
 
 /**
  * Author: Martina Marek
  *
- * Bayes classifier that takes n-gram features.
+ * Bayes org.classifier that takes n-gram features.
  */
 
 public class NGramClassifier extends Classifier {

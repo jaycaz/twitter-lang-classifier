@@ -1,4 +1,4 @@
-package dataReader;
+package org.dataReader;
 
 /**
  * Created by May on 11/10/15.

@@ -22,13 +22,11 @@ public class NGramTester {
         classifier.saveToFile("NGram");
         classifier.reset();
         //classifier.loadFile("NGram");
-/*
         HashMap<String, ArrayList<String>> testData = reader.getInputSentences("_test");
         long startTime = System.nanoTime();
         System.out.print("Accuracy: " + classifier.accuracy(testData, true, 10));
         long estimatedTime = System.nanoTime() - startTime;
         System.out.println("Total time for evaluation: " + estimatedTime);
-        System.out.println("Done.");*/
     }
 	
 }

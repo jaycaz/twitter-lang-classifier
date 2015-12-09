@@ -1,6 +1,6 @@
-package dataReader;
+package org.dataReader;
 
-import classifier.NGramClassifier;
+import org.classifier.NGramClassifier;
 
 import java.io.*;
 import java.util.ArrayList;
