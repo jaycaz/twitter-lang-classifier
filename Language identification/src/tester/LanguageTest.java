@@ -1,7 +1,7 @@
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import util.Language;
+import org.util.Language;
 
 import static org.junit.Assert.*;
 

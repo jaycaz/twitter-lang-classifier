@@ -1,9 +1,6 @@
-package tester;
-
-import classifier.NGramClassifier;
-import dataReader.ReadData;
-import dataReader.TwitterDataSimulator;
-import util.Language;
+import org.classifier.NGramClassifier;
+import org.dataReader.ReadData;
+import org.dataReader.TwitterDataSimulator;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -28,8 +25,8 @@ public class ParameterTest {
     public static void evaluation(HashMap<String, ArrayList<String>> trainingData, HashMap<String, ArrayList<String>> testData) {
         NGramClassifier classifier = new NGramClassifier();
         classifier.train(trainingData);
-        //classifier.writeAccuracyByClassSortedToFile("AccuracyByClassSorted.txt", testData);
-        //classifier.f1ByClass(testData, true);
+        //org.classifier.writeAccuracyByClassSortedToFile("AccuracyByClassSorted.txt", testData);
+        //org.classifier.f1ByClass(testData, true);
 
     }
 

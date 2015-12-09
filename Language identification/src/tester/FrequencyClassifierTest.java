@@ -1,11 +1,8 @@
-package tester;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import util.Language;
-import classifier.FrequencyClassifier;
-import dataReader.ReadData;
+import org.classifier.FrequencyClassifier;
+import org.dataReader.ReadData;
 
 public class FrequencyClassifierTest {
 	
@@ -19,15 +16,15 @@ public class FrequencyClassifierTest {
         classifier.train(trainingData);
         System.out.println("Finished Training. Now evaluating...!");
         //HashMap<Language, ArrayList<ArrayList<String>>> devData = reader.getInputMap("_dev");
-        //classifier.accuracyByClass(devData);
-        //double accuracy = classifier.accuracy(devData);
+        //org.classifier.accuracyByClass(devData);
+        //double accuracy = org.classifier.accuracy(devData);
         //System.out.println("Acccuracy: " + accuracy);
-        //double fscore = classifier.f1(devData);
+        //double fscore = org.classifier.f1(devData);
         //System.out.println("F1: " + fscore);
         HashMap<String, ArrayList<String>> testData = reader.getInputSentences("_test");
         double taccuracy = classifier.accuracy(testData);
         System.out.println("Acccuracy on test: " + taccuracy);
-        //double tfscore = classifier.f1(testData);
+        //double tfscore = org.classifier.f1(testData);
         //System.out.println("F1: " + tfscore);
 	}
 }

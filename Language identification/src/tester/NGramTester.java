@@ -1,7 +1,5 @@
-package tester;
-
-import classifier.NGramClassifier;
-import dataReader.ReadData;
+import org.classifier.NGramClassifier;
+import org.dataReader.ReadData;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -17,7 +15,7 @@ public class NGramTester {
         NGramClassifier classifier = new NGramClassifier();
         System.out.println("Training...!");
         classifier.train(TrainingData);
-        //classifier.writeToFile("nGramClassifier");
+        //org.classifier.writeToFile("nGramClassifier");
         System.out.println("Finished Training. Now evaluating...!");
 
         HashMap<String, ArrayList<String>> testData = reader.getInputSentences("_test");
@@ -25,17 +23,17 @@ public class NGramTester {
         System.out.print("Accuracy: " + classifier.accuracy(testData));
         long estimatedTime = System.nanoTime() - startTime;
         System.out.println("Total time for evaluation: " + estimatedTime);
-        //classifier.writeAccuracyByClassSortedToFile("AccuracyByClassSorted.txt", testData);
+        //org.classifier.writeAccuracyByClassSortedToFile("AccuracyByClassSorted.txt", testData);
         //TwitterDataSimulator twitterSim = new TwitterDataSimulator();
         //HashMap<Language, ArrayList<String>> testData = twitterSim.getTestingData(5, 10);
-        //System.out.println("Accuracy: " + classifier.accuracy(testData));
-        //classifier.f1Acc(testData);
-        //classifier.writeScoresToFile("ScoresNGramLatex.txt", testData);
-        //double taccuracy = classifier.accuracy(testData);
+        //System.out.println("Accuracy: " + org.classifier.accuracy(testData));
+        //org.classifier.f1Acc(testData);
+        //org.classifier.writeScoresToFile("ScoresNGramLatex.txt", testData);
+        //double taccuracy = org.classifier.accuracy(testData);
         //System.out.println("Acccuracy on test: " + taccuracy);
-        //double tfscore = classifier.f1(testData);
+        //double tfscore = org.classifier.f1(testData);
         //System.out.println("F1: " + tfscore);
-        //classifier.f1ByClass(data);
+        //org.classifier.f1ByClass(data);
         System.out.println("Done.");
     }
 	
