@@ -1,6 +1,7 @@
 package tester;
 
 import classifier.NGramClassifier;
+import classifier.StackedLRNGram;
 import dataReader.ReadData;
 import dataReader.TwitterDataSimulator;
 import util.Language;
@@ -52,15 +53,16 @@ public class ParameterTest {
 
     public static void outputDifferentParams(HashMap<String, ArrayList<String>> trainingData, HashMap<String, ArrayList<String>> testData) {
         System.out.println("Parameter Test is active!");
-        NGramClassifier classifier = new NGramClassifier();
+        StackedLRNGram classifier = new StackedLRNGram();
         classifier.train(trainingData);
         int[] fNum = new int[]{5, 10, 15, 20, 30};
         try {
-            BufferedWriter acc = new BufferedWriter(new FileWriter("Beamsearch.csv", true));
+            BufferedWriter acc = new BufferedWriter(new FileWriter("BeamsearchStacked.csv", true));
             acc.write("beam size, accuracy, time \n");
             long startTime = System.nanoTime();
             double a = classifier.accuracy(testData);
             long estimatedTime = System.nanoTime() - startTime;
+            System.out.println("No beam: accuracy: " + a + ", time:" + estimatedTime);
             acc.write("no beam, " + a + ", " + estimatedTime/1000000000.0 + "\n");
             acc.close();
             for (int i : fNum) {
@@ -69,7 +71,7 @@ public class ParameterTest {
                 a = classifier.accuracy(testData, true, i);
                 estimatedTime = System.nanoTime() - startTime;
                 System.out.println(i + ": accuracy: " + a + ", time:" + estimatedTime);
-                acc = new BufferedWriter(new FileWriter("Beamsearch.csv", true));
+                acc = new BufferedWriter(new FileWriter("BeamsearchStacked.csv", true));
                 acc.write(Integer.toString(i) + ", " + Double.toString(a) + ", " + estimatedTime/1000000000.0 + "\n");
                 acc.close();
             }

@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Created by martina on 12/2/15.
+ * Author: Martina Marek
+ *
+ * Reads in the data from the DSL shared task.
  */
 public class DSLReader {
 
@@ -23,6 +25,13 @@ public class DSLReader {
 
     }
 
+    /**
+     * Reads in the data from the given file for the specified group
+     *
+     * @param filename
+     * @param group
+     * @return map of sentences
+     */
     public static HashMap<String, ArrayList<String>> readInData(String filename, String group) {
         HashMap<String, ArrayList<String>> data = new HashMap<>();
         int max;

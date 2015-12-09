@@ -124,7 +124,14 @@ public abstract class Classifier {
 		return f1.getCount("total");
 	}
 
-
+	/**
+	 * Computes the F1 score by class and in total, option to print confusion matrix
+	 *
+	 * @param testSentences
+	 * @param printConfusionMatrix: wether to print confusion matrix
+	 * @param filename
+	 * @return Counter of F1 scores
+	 */
 	public ClassicCounter<String> f1ByClass(HashMap<String, ArrayList<String>> testSentences, boolean printConfusionMatrix, String filename) {
 		Evaluator eval = new Evaluator();
 		Pair<ArrayList<String>, ArrayList<String>> guessLabels = getGuessLabelLists(testSentences);
@@ -133,17 +140,16 @@ public abstract class Classifier {
 		return eval.f1ByClass(guesses.toArray(new String[guesses.size()]), labels.toArray(new String[labels.size()]), printConfusionMatrix, filename);
 	}
 
+	/**
+	 * Computes the F1 score by class and in total
+	 *
+	 * @param testSentences
+	 * @return Counter of F1 scores
+     */
 	public ClassicCounter<String> f1ByClass(HashMap<String, ArrayList<String>> testSentences) {
 		return f1ByClass(testSentences, false, "");
 	}
 
-	public void f1Acc(HashMap<String, ArrayList<String>> testSentences) {
-		ClassicCounter<String> f = f1ByClass(testSentences);
-		ClassicCounter<String> a = accuracyByClass(testSentences);
-		for (String lang: f.keySet()) {
-			System.out.println("F1 for lang: "+ lang + " = " + f.getCount(lang) + ", accuracy: " + a.getCount(lang));
-		}
-	}
 
 
 	public Pair<Pair<Double, Double>, ArrayList<Pair<String, Pair<Double, Double>>>> accuracyAndF1ByClass(HashMap<String, ArrayList<String>> testSentences) {

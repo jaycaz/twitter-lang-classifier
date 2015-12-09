@@ -40,7 +40,7 @@ public class LogisticRegression extends Classifier {
 	 * Constructs a Logistic Regression classifier with 5-grams and the 5000 most frequent n-grams
 	 */
 	public LogisticRegression () {
-		this(5000, 5);
+		this(1000, 5);
 	}
 
 
@@ -93,5 +93,10 @@ public class LogisticRegression extends Classifier {
 		Object label = c.classOf(d);
 		return (String) label;
 	}
+
+	public void setNGram(int nGram) {
+		this.nGram = nGram;
+	}
+
 
 }

@@ -34,6 +34,16 @@ import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ * Author: Martina Marek
+ *
+ * Implements a RNN.
+ *
+ * source: RNN from DeepLearning4j: http://deeplearning4j.org/recurrentnetwork.html, modified to fit our data
+ * and our model
+ *
+ */
 public class RNN {
 
     private static Logger log = LoggerFactory.getLogger(RNN.class);
@@ -42,9 +52,9 @@ public class RNN {
 
 
     public static void main( String[] args ) throws Exception {
-        int lstmLayerSize = 50;					//Number of units in each GravesLSTM layer
+        int lstmLayerSize = 100;					//Number of units in each GravesLSTM layer
         int miniBatchSize = 10;						//Size of mini batch to use when  training
-        int examplesPerEpoch = 50*miniBatchSize;	//i.e., how many examples to learn on between generating samples
+        int examplesPerEpoch = 5*miniBatchSize;	//i.e., how many examples to learn on between generating samples
         int exampleLength = 100;					//Length of each training example
         int numEpochs = 50;							//Total number of training + sample generation epochs
         int nSamplesToGenerate = 50;					//Number of samples to generate after each training epoch
@@ -55,10 +65,10 @@ public class RNN {
         DataSetIterator iter = new DataSetIterator(exampleLength, miniBatchSize, examplesPerEpoch, new Random(12345), "DSLCC/train.txt", "DSLCC/devel.txt", "A");
         int nOut = iter.totalOutcomes();
 
-        /*
+
         //Set up network configuration:
         MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT).iterations(20)
+                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT).iterations(10)
                 .learningRate(0.01)
                 .rmsDecay(0.95)
                 .seed(12345)
@@ -84,11 +94,11 @@ public class RNN {
 
 
         net.init();
-        net.setListeners(new ScoreIterationListener(10));*/
+        net.setListeners(new ScoreIterationListener(10));
         //net.setListeners(new NeuralNetPlotterIterationListener (1));
         //net.setListeners(new Collection<IterationListener>(new ScoreIterationListener(10), new NeuralNetPlotterIterationListener(1, true)));
 
-        MultiLayerNetwork net = loadModel("RNN");
+        //MultiLayerNetwork net = loadModel("RNN");
 
         //Print the  number of parameters in the network (and for each layer)
         Layer[] layers = net.getLayers();
@@ -108,7 +118,7 @@ public class RNN {
             System.out.println("--------------------");
             System.out.println("Completed epoch " + i);
             System.out.println("Trying to identify " + nSamplesToGenerate + " languages... ");
-            String[] samples = sampleLanguages(net,iter,rng,exampleLength,nSamplesToGenerate);
+            String[] samples = sampleLanguages(net,iter,exampleLength,nSamplesToGenerate);
             /*for( int j=0; j<samples.length; j++ ){
                 System.out.println("----- Sample " + j + " -----");
                 System.out.println(samples[j]);
@@ -124,9 +134,17 @@ public class RNN {
         System.out.println("\n\nExample complete");
     }
 
-
+    /**
+     * Classifies a specified number of languages
+     *
+     * @param net
+     * @param iter
+     * @param charactersToSample
+     * @param numSamples
+     * @return output String
+     */
     private static String[] sampleLanguages(MultiLayerNetwork net,
-                                                         DataSetIterator iter, Random rng, int charactersToSample, int numSamples ){
+                                                         DataSetIterator iter, int charactersToSample, int numSamples ){
         String[] labels = new String[numSamples];
         String[] predicted = new String[numSamples];
 
@@ -149,9 +167,6 @@ public class RNN {
             int index = maxInd/ex.getSecond().length();
             predicted[i] = iter.getLanguageByIndex(index);
         }
-        //Evaluation eval = new Evaluation();
-        //eval.eval(gold, allOuts);
-        //log.info(eval.stats());
 
         int locError = 0;
         int locTotal = 0;

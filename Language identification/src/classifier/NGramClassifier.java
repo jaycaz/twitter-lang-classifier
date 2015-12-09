@@ -1,16 +1,15 @@
 package classifier;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.stats.IntCounter;
 import featureExtractor.NGramFeatures;
-import util.Language;
 
 /**
  * Author: Martina Marek
@@ -41,7 +40,7 @@ public class NGramClassifier extends Classifier {
 	}
 
 	public NGramClassifier() {
-		this(5, 5, 100, 100);
+		this(5, 5, 5000, 1000);
 	}
 
 
@@ -68,8 +67,10 @@ public class NGramClassifier extends Classifier {
 
 	/**
 	 *
+	 *
 	 * @param sentence
 	 * @param beamSearch: whether to use a beam search
+	 * @param beamSize
 	 * @return predicted label
      */
 	public String classify(String sentence, boolean beamSearch, int beamSize) {
@@ -210,6 +211,49 @@ public class NGramClassifier extends Classifier {
 		}
 	}
 
+	public void saveToFile (String pathname) {
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(pathname + "/params.txt"));
+			writer.write(Integer.toString(nGramMin) + ", " + nGramMax);
+			writer.close();
+			FileOutputStream f = new FileOutputStream(pathname + "/prob.ser");
+			ObjectOutputStream s = new ObjectOutputStream(f);
+			s.writeObject(nGramProb);
+			s.close();
+			f = new FileOutputStream(pathname + "/probReduced.ser");
+			s = new ObjectOutputStream(f);
+			s.writeObject(nGramProbReduced);
+			s.close();
+		} catch (IOException e) {
+			System.out.println(e.fillInStackTrace());
+		}
+	}
+
+	public void loadFile (String pathname) {
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(new File(pathname + "/params.txt")));
+			String line = reader.readLine();
+			nGramMin = Character.getNumericValue(line.charAt(0));
+			nGramMax = Character.getNumericValue(line.charAt(3));
+			FileInputStream f = new FileInputStream(new File(pathname + "/prob.ser"));
+			ObjectInputStream s = new ObjectInputStream(f);
+			nGramProb = (HashMap<String, ClassicCounter<String>>) s.readObject();
+			s.close();
+			f = new FileInputStream(new File(pathname + "/probReduced.ser"));
+			s = new ObjectInputStream(f);
+			nGramProbReduced = (HashMap<String, ClassicCounter<String>>) s.readObject();
+			s.close();
+
+		} catch (FileNotFoundException e) {
+			System.out.println(e.fillInStackTrace());
+		} catch (IOException e) {
+			System.out.println(e.fillInStackTrace());
+		} catch (ClassNotFoundException e) {
+			System.out.println(e.fillInStackTrace());
+		}
+
+	}
+
 	public void setNGram(int min, int max) {
 		nGramMin = min;
 		nGramMax = max;
@@ -221,6 +265,7 @@ public class NGramClassifier extends Classifier {
 
 	public void reset() {
 		nGramProb.clear();
+		nGramProbReduced.clear();
 	}
 
 }

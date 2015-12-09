@@ -16,14 +16,13 @@ import java.util.Random;
 /**
  * Author: Martina Marek
  *
+ * Data iterator for the RNN.
+ *
  * source: CharacterIterator from DeepLearning4j: http://deeplearning4j.org/recurrentnetwork.html, modified to fit our data
  * and our model
  */
 public class DataSetIterator {
 
-    //private String[] LANGUAGES = {"afr", "bre", "bug", "cak", "ces",  "deu", "eng", "fin", "fra", "swe"};
-    private String[] languageList = {"afr", "deu"};
-    //private String[] LANGUAGES = {"abk", "afr", "aka", "amh", "amu", "ara", "arg", "asm", "ast", "awa", "aym" ,"aze" ,"bam" ,"bel" ,"ben" ,"bih" ,"bis" ,"bos" ,"bpy" ,"bre" ,"bug" ,"bul" ,"cak" ,"cat" ,"cco" ,"ceb" ,"ces" ,"cha" ,"che" ,"chr" ,"chv" ,"ckb" ,"cor" ,"cos" ,"crh" ,"cym" ,"dan" ,"deu" ,"div" ,"dzo","ell" ,"eml" ,"eng" ,"epo" ,"est" ,"eus" ,"ewe" ,"fao" ,"fas" ,"fij" ,"fin" ,"fra" ,"frp" ,"fry" ,"ful" ,"gla" ,"gle" ,"glg" ,"glv" ,"grn" ,"guj" ,"hat" ,"hau" ,"haw" ,"heb", "hil", "hin","hrv" ,"hun" ,"hye" ,"ibo" ,"iku" ,"ilo" ,"ind" ,"isl" ,"jac" ,"jav" ,"jpn" ,"kab" ,"kal" ,"kan" ,"kat" ,"kaz" ,"kek" ,"khm" ,"kik" ,"kin" ,"kir" ,"kom" ,"kor" ,"kur" ,"lad" ,"lao" ,"lat" ,"lav" ,"lez" ,"lij" ,"lin" ,"lit" ,"lmo" ,"ltz" ,"lug" ,"mal" ,"mam" ,"mar" ,"min" ,"mkd" ,"mlg" ,"mlt" ,"mon" ,"mri" ,"msa","mya" ,"mzn" ,"nah" ,"nap" ,"nav" ,"ndo" ,"nds" ,"nep" ,"new" ,"nld" ,"nno" ,"nob" ,"nor" ,"nya" ,"oci" ,"ori" ,"orm" ,"pam" ,"pan" ,"pdc" ,"pdt" ,"pms" ,"pol" ,"por" ,"ppl" ,"pus" ,"quc" ,"que" ,"roh" ,"ron" ,"rus" ,"scn" ,"sco" ,"sin" ,"slk" ,"slv" ,"sme" ,"smo" ,"sna" ,"snd" ,"som" ,"spa" ,"sqi" ,"srd" ,"srp" ,"sun" ,"swa" ,"swe" ,"tah" ,"tam" ,"tat" ,"tel" ,"tgk" ,"tgl" ,"tha" ,"tir" ,"ton" ,"tpi" ,"tsn" ,"tum" ,"tur" ,"twi" ,"udm" ,"uig" ,"ukr" ,"urd" ,"usp" ,"uzb" ,"vec" ,"ven" ,"vie" ,"vol" ,"war" ,"wln" ,"wol" ,"xal" ,"xho" ,"yid" ,"yor" ,"zh-yue" ,"zha" ,"zho" ,"zul" };
     private String[] languages;
     private HashMap<String, Integer> languageToIndMap;
     private char[] uniqueChars;
@@ -38,24 +37,6 @@ public class DataSetIterator {
     private HashMap<String, ArrayList<String>> devData;
 
 
-    public DataSetIterator (int exampleLength, int miniBatchSize, int numExamplesToFetch, Random rng) {
-        this.exampleLength = exampleLength;
-        this.miniBatchSize = miniBatchSize;
-        this.numExamplesToFetch = numExamplesToFetch;
-        this.rng = rng;
-        languageToIndMap = new HashMap<>();
-        languages = new String[languageList.length];
-        for (int i = 0; i < languageList.length; i++) {
-            languages[i] = languageList[i];
-            languageToIndMap.put(languages[i], i);
-        }
-        initializeUniqueCharMap();
-        uniqueChars = new char[charToIndMap.size()];
-        for (char c: charToIndMap.keySet()) uniqueChars[charToIndMap.get(c)] = c;
-        ReadData reader = new ReadData();
-        trainingData = reader.getInputSentences("_train");
-        devData = reader.getInputSentences("_dev");
-    }
 
     public DataSetIterator (int exampleLength, int miniBatchSize, int numExamplesToFetch, Random rng, String trainFilename, String testFilename, String group) {
         this.exampleLength = exampleLength;
@@ -90,15 +71,16 @@ public class DataSetIterator {
         charToIndMap = createUniqueChars.createUniqueCharacterMap(FilePaths.DATA_PATH, languages);
     }
 
-
-    //public boolean hasNext() {
-       // return examplesSoFar + miniBatchSize <= numExamplesToFetch;
-    //}
-
     public DataSet next() {
         return next(miniBatchSize);
     }
 
+    /**
+     * Fetches next example. Examples are created randomly for each language and uniformly over languages.
+     *
+     * @param num
+     * @return next input for the RNN
+     */
     public DataSet next(int num) {
         if (examplesSoFar + num > numExamplesToFetch) throw new NoSuchElementException();
         //Allocate space:
@@ -106,7 +88,6 @@ public class DataSetIterator {
         INDArray labels = Nd4j.zeros(new int[]{num, languages.length, exampleLength});
 
         for (int i = 0; i < num; i++) {
-            //labels.putScalar(new int[]{i, currLanguageInd, exampleLength - 1}, 1.0);
             labels.putRow(i, getLanguageVector(currLanguageInd, exampleLength));
             String sentence = getRandomSentence(getLanguageByIndex(currLanguageInd), "train").getSecond();
             input.putRow(i, getFeatureVector(sentence, exampleLength));
@@ -117,6 +98,13 @@ public class DataSetIterator {
         return new DataSet(input,labels);
     }
 
+    /**
+     * Creates a feature vector for a given sentence.
+     *
+     * @param sentence
+     * @param exampleLength
+     * @return feature vector
+     */
     public INDArray getFeatureVector(String sentence, int exampleLength) {
         INDArray features  = Nd4j.zeros(new int[]{1, uniqueChars.length, exampleLength});
         for (int j = 0; j < exampleLength; j++) {
@@ -130,10 +118,22 @@ public class DataSetIterator {
         return features;
     }
 
+    /**
+     *
+     * @param language
+     * @param exampleLength
+     * @return label vector
+     */
     public INDArray getLanguageVector(String language, int exampleLength) {
         return getLanguageVector(getLanguageIndex(language), exampleLength);
     }
 
+    /**
+     *
+     * @param indexLang
+     * @param exampleLength
+     * @return label vector
+     */
     public INDArray getLanguageVector(int indexLang, int exampleLength) {
         INDArray labels = Nd4j.zeros(new int[]{1, languages.length, exampleLength});
         for (int j = 0; j < exampleLength; j++) {
