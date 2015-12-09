@@ -1,11 +1,12 @@
 package util;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.util.*;
-
 import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.util.Pair;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -18,8 +19,10 @@ public class Evaluator {
         int error = 0;
         int total = 0;
         for (int i = 0; i < guesses.length; i++) {
+
             if (!guesses[i].equals(gold[i])) error++;
             total++;
+
         }
         return (total - error) / (float) total;
     }

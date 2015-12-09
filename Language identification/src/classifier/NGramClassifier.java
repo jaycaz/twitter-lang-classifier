@@ -1,18 +1,17 @@
 package classifier;
 
+import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.Counters;
+import edu.stanford.nlp.stats.IntCounter;
+import featureExtractor.NGramFeatures;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import edu.stanford.nlp.stats.Counters;
-import edu.stanford.nlp.stats.ClassicCounter;
-import edu.stanford.nlp.stats.IntCounter;
-import featureExtractor.NGramFeatures;
-import util.Language;
-
 public class NGramClassifier extends Classifier {
-	private HashMap<String, ClassicCounter<String>> nGramProb;
+	private HashMap<String, ClassicCounter<String>> nGramProb  = new HashMap<>();
 	private NGramFeatures nGramExtractor;
 	private int nGramMax = 5;
 	private int nGramMin = 5;
@@ -21,9 +20,10 @@ public class NGramClassifier extends Classifier {
 	private double minProb = 1/((double) topCounts * 1000);
 
 
+
 	public void train(
 			HashMap<String, ArrayList<String>> trainingData) {
-		nGramProb = new HashMap<>();
+
 		nGramExtractor = new NGramFeatures();
 		for(String language: trainingData.keySet()) {
 			ClassicCounter<String> features = new ClassicCounter<>();
@@ -32,6 +32,13 @@ public class NGramClassifier extends Classifier {
 			}
 			Counters.retainTop(features, topCounts);
 			Counters.normalize(features);
+			for(String key: trainingData.keySet()){
+				if(key.equals(language)){
+					ClassicCounter<String> list = nGramProb.get(language);
+					if(list!= null)
+						features.addAll(list);
+				}
+			}
 			nGramProb.put(language, features);
 		}
 	}
@@ -62,6 +69,7 @@ public class NGramClassifier extends Classifier {
 				maxLang = lang;
 			}
 		}
+
 		if (maxLang == null) return "UNKNOWN";
 		return maxLang;
 	}

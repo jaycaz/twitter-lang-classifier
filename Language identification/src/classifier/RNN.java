@@ -1,17 +1,6 @@
 package classifier;
 
-import java.io.*;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Random;
-
-import dataReader.DataSetIterator;
-import org.apache.commons.io.FileUtils;
+/*import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.util.Pair;
 import org.deeplearning4j.eval.Evaluation;
 import org.deeplearning4j.nn.api.Layer;
@@ -33,9 +22,9 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+*/
 public class RNN {
-
+/*
     private static Logger log = LoggerFactory.getLogger(RNN.class);
     private static int total;
     private static int error;
@@ -108,6 +97,7 @@ public class RNN {
                 System.out.println("----- Sample " + j + " -----");
                 System.out.println(samples[j]);
             }*/
+    /*
             System.out.println("----- Error " + ((float) error)/total + " -----");
             iter.reset();	//Reset iterator for another epoch
         }
@@ -210,5 +200,5 @@ public class RNN {
         }
         return null;
     }
-
+*/
 }

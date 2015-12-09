@@ -36,7 +36,9 @@ public class NGramChunkClassify {
         HashMap<Language, ArrayList<String>> trainingData;
         trainingData = reader.getNextChunk("_train", l);
         ClassicCounter<String> features = new ClassicCounter<String>();
+        int count = 0;
         while( trainingData != null){
+            if(count++ == 2) break;
         for (Language language : trainingData.keySet()) {
 
             for (String sentence : trainingData.get(language)) {

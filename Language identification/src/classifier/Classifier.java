@@ -1,16 +1,15 @@
 package classifier;
 
+import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.Counters;
+import edu.stanford.nlp.util.Pair;
+import util.Evaluator;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import edu.stanford.nlp.stats.ClassicCounter;
-import edu.stanford.nlp.stats.Counters;
-import edu.stanford.nlp.util.Pair;
-import util.Evaluator;
-import util.Language;
 
 public abstract class Classifier {
 	public abstract void train(HashMap<String, ArrayList<String>> trainingData);
@@ -29,7 +28,7 @@ public abstract class Classifier {
 		for (String lang: testSentences.keySet()) {
 			int i = 0;
 			for (String paragraph: testSentences.get(lang)) {
-				if (i < 100) {
+				if (i < 1000) {
 					labels.add(lang);
 					guesses.add(classify(paragraph));
 					i++;

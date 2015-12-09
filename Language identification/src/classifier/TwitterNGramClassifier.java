@@ -4,7 +4,6 @@ import dataReader.ReadData;
 import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.util.Pair;
-import featureExtractor.NGramFeature;
 import featureExtractor.NGramFeatures;
 import util.Evaluator;
 import util.Language;
@@ -20,8 +19,8 @@ public class TwitterNGramClassifier {
 
     private HashMap<String, ClassicCounter<String>> nGramProb;
     private NGramFeatures nGramExtractor;
-    private int nGramMax = 5;
-    private int nGramMin = 5;
+    private int nGramMax = 4;
+    private int nGramMin = 4;
 
     int nGram = 3;
     int topCounts = 1000;
@@ -40,7 +39,7 @@ public class TwitterNGramClassifier {
         ClassicCounter<String> features = new ClassicCounter<String>();
         while( trainingData != null){
             for (String language : trainingData.keySet()) {
-
+                if(language == null) continue;
                 for (String sentence : trainingData.get(language)) {
                     features = countNGrams(sentence, features);
                 }
@@ -50,7 +49,7 @@ public class TwitterNGramClassifier {
                 boolean present = false;
                 String k = null;
                 for (String key : nGramProb.keySet()) {
-
+                //    System.out.println(key + language);
                     if (key.equals(language)) {
                         present = true;
                         k = key;
@@ -58,15 +57,15 @@ public class TwitterNGramClassifier {
                 }
                 if (!present) {
                     nGramProb.put(language, features);
-                    System.out.println("Feature len: .. " + nGramProb.get(language).size());
+                    //System.out.println("Feature len: .. " + nGramProb.get(language).size());
                 }
                 else{
                     ClassicCounter<String> tempCounter = new ClassicCounter<String>(nGramProb.get(k));
                     tempCounter.addAll(features);
                     nGramProb.put(language, tempCounter);
 
-                    System.out.println("Feature len: " + tempCounter.size());
-                    System.out.println("Feature len: .. " + nGramProb.get(language).size());
+                    //System.out.println("Feature len: " + tempCounter.size());
+                    //System.out.println("Feature len: .. " + nGramProb.get(language).size());
                 }
 
             }
@@ -185,7 +184,7 @@ public class TwitterNGramClassifier {
 
                 maxProb = prob;
                 maxLang = lang;
-                System.out.println("MAX: " + maxProb + maxLang );
+                //System.out.println("MAX: " + maxProb + maxLang );
             }
         }
         if (maxLang == null) return "UNKNOWN";
@@ -203,7 +202,7 @@ public class TwitterNGramClassifier {
             for (String paragraph: testSentences.get(lang)) {
                 //if (i > 100) continue;
                 String guess = classify(paragraph);
-                System.out.println("Supposed to be: " + lang + " guessed " + guess);
+                //System.out.println("Supposed to be: " + lang + " guessed " + guess);
                 if (!lang.equals(guess)) {
                     error++;
                 }
