@@ -1,9 +1,6 @@
-package tester;
-
-import classifier.NGramClassifier;
-import dataReader.ReadData;
-import dataReader.TwitterDataSimulator;
-import util.Language;
+import org.classifier.NGramClassifier;
+import org.dataReader.ReadData;
+import org.dataReader.TwitterDataSimulator;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -21,30 +18,26 @@ public class ParameterTest {
         HashMap<String, ArrayList<String>> testData = reader.getInputSentences("_test");
         System.out.println("Read in Data!");
         //evaluation(trainingData, trainingData);
-        //outputDifferentParams(trainingData, testData);
-        outputTwitterSimul(trainingData);
+        outputDifferentParams(trainingData, testData);
+        //outputTwitterSimul(trainingData, testData);
     }
 
     public static void evaluation(HashMap<String, ArrayList<String>> trainingData, HashMap<String, ArrayList<String>> testData) {
         NGramClassifier classifier = new NGramClassifier();
         classifier.train(trainingData);
-        //classifier.writeAccuracyByClassSortedToFile("AccuracyByClassSorted.txt", testData);
-        //classifier.f1ByClass(testData, true);
+        //org.classifier.writeAccuracyByClassSortedToFile("AccuracyByClassSorted.txt", testData);
+        //org.classifier.f1ByClass(testData, true);
 
     }
 
-    public static void outputTwitterSimul(HashMap<String, ArrayList<String>> trainingData) {
+    public static void outputTwitterSimul(HashMap<String, ArrayList<String>> trainingData, HashMap<String, ArrayList<String>> test) {
         TwitterDataSimulator twitterSim = new TwitterDataSimulator();
         NGramClassifier classifier = new NGramClassifier();
         classifier.train(trainingData);
-        classifier.writeTopNFeaturesWithCountToFile("TopFeatures.txt", 20);
         try {
-            //BufferedWriter twitter = new BufferedWriter(new FileWriter("TwitterMatlab.csv"));
-            //twitter.write(", accuracy, f1 \n");
-            for (int i = 25; i < 31; i = i + 5) {
+            for (int i = 19; i < 30; i = i + 2) {
                 BufferedWriter twitter = new BufferedWriter(new FileWriter("TwitterMatlab.csv", true));
                 HashMap<String, ArrayList<String>> testData = twitterSim.getTestingData(i, i);
-                //double f = classifier.f1(testData);
                 double acc = classifier.accuracy(testData);
                 twitter.write("Sentence length: " + Integer.toString(i) + ", " + Double.toString(acc) + "\n");
                 twitter.close();
@@ -56,47 +49,28 @@ public class ParameterTest {
 
     public static void outputDifferentParams(HashMap<String, ArrayList<String>> trainingData, HashMap<String, ArrayList<String>> testData) {
         System.out.println("Parameter Test is active!");
-        NGramClassifier classifier = new NGramClassifier();
-        int[] fNum = new int[]{1000, 2000, 3000, 4000};
+        StackedLRNGram classifier = new StackedLRNGram();
+        classifier.train(trainingData);
+        int[] fNum = new int[]{5, 10, 15, 20, 30};
         try {
-            //BufferedWriter acc = new BufferedWriter(new FileWriter("AccuracyMatlab.csv"));
-            //BufferedWriter f1 = new BufferedWriter(new FileWriter("F1Matlab.csv"));
-            //String firstLine = "";
-            //String secondLine = "";
-            for (int j = 5; j < 6; j++) {
-                //for (int k = j; k < 7; k++) {
-                    //firstLine += ", " + Integer.toString(j);
-                    //secondLine += ", " + Integer.toString(k);
-                //}
-            }
-            //acc.write(firstLine + "\n");
-            //f1.write(firstLine + "\n");
-            //acc.write(secondLine + "\n");
-            //f1.write(secondLine + "\n");
+            BufferedWriter acc = new BufferedWriter(new FileWriter("BeamsearchStacked.csv", true));
+            acc.write("beam size, accuracy, time \n");
+            long startTime = System.nanoTime();
+            double a = classifier.accuracy(testData);
+            long estimatedTime = System.nanoTime() - startTime;
+            System.out.println("No beam: accuracy: " + a + ", time:" + estimatedTime);
+            acc.write("no beam, " + a + ", " + estimatedTime/1000000000.0 + "\n");
+            acc.close();
             for (int i : fNum) {
-                classifier.setTopCounts(i);
-                BufferedWriter acc = new BufferedWriter(new FileWriter("AccuracyMatlab.csv", true));
-                acc.write(Integer.toString(i));
-                //f1.write(Integer.toString(i));
-                for (int j = 5; j < 6; j++) {
-                    //for (int k = j; k < 7; k++) {
-                        classifier.setNGram(j, j);
-                        System.out.println("Training with parameters: TopCount: " + i + " and NGram: [" + j + "] ...!");
-                        classifier.train(trainingData);
-                        System.out.println("Finished Training. Now evaluating...!");
-                        double a = classifier.accuracy(testData);
-                        System.out.print(i + ": accuracy: " + a);
-                        //double f = classifier.f1(testData);
-                        acc.write(", " + Double.toString(a));
-                        //f1.write(", " + Double.toString(f));
-                        classifier.reset();
-                    //}
-                }
-                acc.write("\n");
+                System.out.println("Testing  on beam size:" + i);
+                startTime = System.nanoTime();
+                a = classifier.accuracy(testData, true, i);
+                estimatedTime = System.nanoTime() - startTime;
+                System.out.println(i + ": accuracy: " + a + ", time:" + estimatedTime);
+                acc = new BufferedWriter(new FileWriter("BeamsearchStacked.csv", true));
+                acc.write(Integer.toString(i) + ", " + Double.toString(a) + ", " + estimatedTime/1000000000.0 + "\n");
                 acc.close();
-                //f1.write("\n");
             }
-            //f1.close();
         } catch (Exception e) {
             System.out.println(e.fillInStackTrace());
         }

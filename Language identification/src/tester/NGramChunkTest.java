@@ -1,8 +1,6 @@
-package tester;
-
-import classifier.NGramChunkClassify;
-import dataReader.ReadData;
-import util.Language;
+import org.classifier.NGramChunkClassify;
+import org.dataReader.ReadData;
+import org.util.Language;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +26,7 @@ public class NGramChunkTest {
 //                    System.out.println(classifier.nGramProb.containsKey(new Language(language)) + classifier.nGramProb.keySet().toString() + new Language(language).toString() + classifier.nGramProb.get(new Language(language)));
                     classifier.train(reader, language);
 
-               // classifier.retainTop(language);
+               // org.classifier.retainTop(language);
 
             }
             System.out.println("Finished Training. Now evaluating...!");

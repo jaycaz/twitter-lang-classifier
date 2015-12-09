@@ -1,6 +1,4 @@
-package tester;
-
-import dataReader.ReadData;
+import org.dataReader.ReadData;
 
 import java.io.BufferedReader;
 

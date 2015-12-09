@@ -1,9 +1,8 @@
 package tester;
 
-
 import classifier.NGramClassifier;
+import classifier.StackedLRNGram;
 import dataReader.ReadData;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -19,25 +18,15 @@ public class NGramTester {
         NGramClassifier classifier = new NGramClassifier();
         System.out.println("Training...!");
         classifier.train(TrainingData);
-        //classifier.writeToFile("nGramClassifier");
         System.out.println("Finished Training. Now evaluating...!");
-
+        classifier.saveToFile("NGram");
+        classifier.reset();
+        //classifier.loadFile("NGram");
         HashMap<String, ArrayList<String>> testData = reader.getInputSentences("_test");
-        System.out.print("Accuracy: " + classifier.accuracy(testData));
-        classifier.f1ByClass(testData, true);
-
-        //classifier.writeAccuracyByClassSortedToFile("AccuracyByClassSorted.txt", testData);
-        //TwitterDataSimulator twitterSim = new TwitterDataSimulator();
-        //HashMap<Language, ArrayList<String>> testData = twitterSim.getTestingData(5, 10);
-        //System.out.println("Accuracy: " + classifier.accuracy(testData));
-        //classifier.f1Acc(testData);
-        //classifier.writeScoresToFile("ScoresNGramLatex.txt", testData);
-        //double taccuracy = classifier.accuracy(testData);
-        //System.out.println("Acccuracy on test: " + taccuracy);
-        //double tfscore = classifier.f1(testData);
-        //System.out.println("F1: " + tfscore);
-        //classifier.f1ByClass(data);
-        System.out.println("Done.");
+        long startTime = System.nanoTime();
+        System.out.print("Accuracy: " + classifier.accuracy(testData, true, 10));
+        long estimatedTime = System.nanoTime() - startTime;
+        System.out.println("Total time for evaluation: " + estimatedTime);
     }
-
+	
 }
