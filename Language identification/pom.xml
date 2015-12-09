@@ -1,18 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.deeplearning4j</groupId>
-    <artifactId>deeplearning4j-examples</artifactId>
-    <version>0.4-rc0-SNAPSHOT</version>
+    <groupId>org.twitter-lang-id</groupId>
+    <artifactId>twitter-lang-id</artifactId>
+    <version>0.1</version>
 
-    <name>DeepLearning4j Examples</name>
-    <description>Examples of training different data sets</description>
+    <name>Twitter Language ID</name>
+    <description>Automated Classifier for ~200 Languages on Twitter</description>
     <properties>
         <nd4j.version>0.4-rc3.6</nd4j.version>
         <dl4j.version>0.4-rc3.6</dl4j.version>
     </properties>
-
-
 
     <dependencies>
         <dependency>
