@@ -16,6 +16,11 @@ public class SplitData {
         rand.setSeed(0);
         char[] buf = new char[1024];
 
+
+        //split for smaller files
+        if(splitSmall())
+            return;
+
         int random_array[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2 ,2 , 3 , 3 , 3}; // array with 60, 25, 15 proability
 
         for (int i = 0; i < filenames.length; i++) {
@@ -97,6 +102,51 @@ public class SplitData {
                 continue;
             }
         }
+    }
+
+    private static boolean splitSmall() {
+
+        for(String filename: filenames) {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader("data/" + filename + "_train.txt"));
+                String line;
+                int count = 0;
+                BufferedWriter bw = new BufferedWriter(new FileWriter("smallData/" + filename + "_train.txt"));
+                while ((line = br.readLine()) != null) {
+                    //write to file the top 100
+                    bw.write(line);
+                    bw.newLine();
+
+                    if (count++ == 100)
+                        break;
+                }
+                bw.close();
+                br.close();
+
+                br = new BufferedReader(new FileReader("data/" + filename + "_test.txt"));
+                bw = new BufferedWriter(new FileWriter("smallData/" + filename + "_test.txt"));
+                count = 0;
+                while ((line = br.readLine()) != null) {
+                    //write to file the top 100
+                    bw.write(line);
+                    bw.newLine();
+
+                    if (count++ == 100)
+                        break;
+                }
+                bw.close();
+                br.close();
+
+            }
+            catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        return true;
     }
 
     public static int countLines(String filename) throws IOException {

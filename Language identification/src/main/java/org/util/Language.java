@@ -55,7 +55,7 @@ public class Language {
 
         try {
             // Read in all language lines
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath.toString()));
+            BufferedReader bufferedReader = new BufferedReader(new FileReader("data/language-table.txt"));
 
             // Extract language code and name
             while((line = bufferedReader.readLine()) != null) {
@@ -135,4 +135,36 @@ public class Language {
             return false;
         return (name.equals(otherLang.name) && code.equals(otherLang.code));
     }
+
+    /*
+
+    Function to read in ISO 639 - 1 codes and their respective languages. Static, so it can be accessed without a language class.
+     * */
+    public static String getLanguageName(String code){
+        String name = null;
+
+        try {
+            BufferedReader br_iso = new BufferedReader(new FileReader("data/iso-639.txt"));
+            String readin;
+            while((readin = br_iso.readLine()) != null){
+
+                String[] split = readin.split("\t");
+
+                if ( split[0].equals(code))
+                {
+                    name = split[1];
+                    break;
+                }
+
+            }
+            br_iso.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return name;
+    }
+
 }

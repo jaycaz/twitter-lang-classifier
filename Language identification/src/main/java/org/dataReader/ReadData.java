@@ -1,9 +1,9 @@
 /**
  * Created by May on 10/20/15.
  */
-package org.dataReader;
+package dataReader;
 
-import org.util.Language;
+import util.Language;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -18,6 +18,8 @@ import java.util.zip.ZipFile;
 public class ReadData {
 
     static String[] filenames = {"abk", "afr", "aka", "amh", "amu", "ara", "arg", "asm", "ast", "awa", "aym" ,"aze" ,"bam" ,"bel" ,"ben" ,"bih" ,"bis" ,"bos" ,"bpy" ,"bre" ,"bug" ,"bul" ,"cak" ,"cat" ,"cco" ,"ceb" ,"ces" ,"cha" ,"che" ,"chr" ,"chv" ,"ckb" ,"cor" ,"cos" ,"crh" ,"cym" ,"dan" ,"deu" ,"div" ,"dzo","ell" ,"eml" ,"eng" ,"epo" ,"est" ,"eus" ,"ewe" ,"fao" ,"fas" ,"fij" ,"fin" ,"fra" ,"frp" ,"fry" ,"ful" ,"gla" ,"gle" ,"glg" ,"glv" ,"grn" ,"guj" ,"hat" ,"hau" ,"haw" ,"heb", "hil", "hin","hrv" ,"hun" ,"hye" ,"ibo" ,"iku" ,"ilo" ,"ind" ,"isl" ,"jac" ,"jav" ,"jpn" ,"kab" ,"kal" ,"kan" ,"kat" ,"kaz" ,"kek" ,"khm" ,"kik" ,"kin" ,"kir" ,"kom" ,"kor" ,"kur" ,"lad" ,"lao" ,"lat" ,"lav" ,"lez" ,"lij" ,"lin" ,"lit" ,"lmo" ,"ltz" ,"lug" ,"mal" ,"mam" ,"mar" ,"min" ,"mkd" ,"mlg" ,"mlt" ,"mon" ,"mri" ,"msa","mya" ,"mzn" ,"nah" ,"nap" ,"nav" ,"ndo" ,"nds" ,"nep" ,"new" ,"nld" ,"nno" ,"nob" ,"nor" ,"nya" ,"oci" ,"ori" ,"orm" ,"pam" ,"pan" ,"pdc" ,"pdt" ,"pms" ,"pol" ,"por" ,"ppl" ,"pus" ,"quc" ,"que" ,"roh" ,"ron" ,"rus" ,"scn" ,"sco" ,"sin" ,"slk" ,"slv" ,"sme" ,"smo" ,"sna" ,"snd" ,"som" ,"spa" ,"sqi" ,"srd" ,"srp" ,"sun" ,"swa" ,"swe" ,"tah" ,"tam" ,"tat" ,"tel" ,"tgk" ,"tgl" ,"tha" ,"tir" ,"ton" ,"tpi" ,"tsn" ,"tum" ,"tur" ,"twi" ,"udm" ,"uig" ,"ukr" ,"urd" ,"usp" ,"uzb" ,"vec" ,"ven" ,"vie" ,"vol" ,"war" ,"wln" ,"wol" ,"xal" ,"xho" ,"yid" ,"yor" ,"zh-yue" ,"zha" ,"zho" ,"zul" };
+
+    //static private String[] filenames = {"afr", "bre", "bug", "cak", "ces",  "deu", "eng", "fin", "fra", "swe"};
     //static private String[] filenames = {"afr", "deu"};
 
     //static final String INVALID_CHARACTERS = ".,;:!%-0123456789'";
@@ -259,6 +261,9 @@ public class ReadData {
 
                 while ((sCurrentLine = br.readLine()) != null) {
                     //for each line read
+                    //Accuracy: 0.9312352538108826Done. without removing <>
+                    //Accuracy: 0.93325275182724Done after removing <>
+                    if(sCurrentLine.contains("<") || sCurrentLine.contains(">")) continue;
                     if (num_paragraphs++ > maxParagraphs) break;
 
                     String tempsentence = sCurrentLine;
@@ -368,9 +373,17 @@ public class ReadData {
         try {
 
             String sCurrentLine;
+
             ArrayList<String> sentences = new ArrayList<String>();
             int count = 0;
             while ((sCurrentLine = br_chunk.readLine()) != null && count++ < max) {
+
+                if(sCurrentLine.contains("<") || sCurrentLine.contains(">")){
+                    System.out.println("Removing line " + language);
+                    continue;
+
+                }
+
                 String tempsentence = sCurrentLine;
                 //if the value is one of the invalid characters, remove
                 String editSentence = "";
@@ -394,7 +407,7 @@ public class ReadData {
             }
 
         }
-        catch(IOException e){
+        catch(Exception e){
             System.out.println(e.fillInStackTrace());
         }
 
