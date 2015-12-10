@@ -1,9 +1,9 @@
 /**
  * Created by May on 10/20/15.
  */
-package main.java.org.dataReader;
+package org.dataReader;
 
-import main.java.org.util.Language;
+import org.util.Language;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
