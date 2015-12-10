@@ -1,9 +1,9 @@
-package main.java.org.classifier;
+package org.classifier;
 
 import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.util.Pair;
-import main.java.org.util.*;
+import org.util.*;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

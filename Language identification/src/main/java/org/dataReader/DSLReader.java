@@ -1,6 +1,6 @@
-package main.java.org.dataReader;
+package org.dataReader;
 
-import main.java.org.classifier.*;
+import org.classifier.*;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
