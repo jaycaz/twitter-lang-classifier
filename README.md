@@ -12,7 +12,20 @@ Use Maven to install:
 
 Then, execute the .jar file with the full classpath you would like to run.  For example, to run the RNN classifier example code, use:
 
-    java -cp target/twitter-lang-classifier-{VersionNumber}.jar org.classifier.RNN
+    java -cp target/twitter-lang-classifier-{VersionNumber}.jar {ClassPath}
 
-where VersionNumber is the current version number.
+where VersionNumber is the current version number and ClassPath is a fully qualified classpath to one of the classes in our project.
 
+Here is a list of all the classes you can call to run examples:
+
+| ClassPath                         | Description                                                              |
+|-----------------------------------|--------------------------------------------------------------------------|
+| org.classifier.NGramClassifier    | Run ngram classifier training and scoring                                |
+| org.classifier.LogisticRegression | Run Logistic Regression classifier training and scoring                  |
+| org.classifier.RNN                | Run RNN classifier trainer (no scorer implemented)                       |
+| org.main.RunClassifier            | Pass in a string (between double quotes) as a command line argument, and it will classify        |
+| org.main.ClassifierGUI            | Loads a JavaFX GUI that you can type a string into, and it will classify |
+
+So, here is a full example using version 0.1 and the NGramClassifier class:
+
+    java -cp target/twitter-lang-classifier-0.1.jar org.classifier.NGramClassifier
