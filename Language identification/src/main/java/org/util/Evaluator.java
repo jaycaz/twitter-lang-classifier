@@ -1,4 +1,4 @@
- package main.java.org.util;
+ package org.util;
 
 import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.util.Pair;

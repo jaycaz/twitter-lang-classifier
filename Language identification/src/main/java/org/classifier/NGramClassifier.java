@@ -1,4 +1,4 @@
-package main.java.org.classifier;
+package org.classifier;
 
 import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.stats.Counter;

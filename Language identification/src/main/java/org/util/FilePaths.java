@@ -1,4 +1,4 @@
-package main.java.org.util;
+package org.util;
 
 import java.nio.file.Paths;
 

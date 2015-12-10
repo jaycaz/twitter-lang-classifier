@@ -1,4 +1,4 @@
-package main.java.org.dataReader;
+package org.dataReader;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

@@ -1,10 +1,11 @@
-package main.java.org.util;
+package org.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.io.*;
 import java.nio.file.*;
+import org.util.FilePaths;
 
 /* class org.util.Language
 
