@@ -1,15 +1,14 @@
-package org.classifier;
+package main.java.org.classifier;
+
+import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.Counter;
+import edu.stanford.nlp.stats.Counters;
+import edu.stanford.nlp.stats.IntCounter;
+import org.featureExtractor.NGramFeatures;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Properties;
-
-import edu.stanford.nlp.stats.Counter;
-import edu.stanford.nlp.stats.Counters;
-import edu.stanford.nlp.stats.ClassicCounter;
-import edu.stanford.nlp.stats.IntCounter;
-import org.featureExtractor.NGramFeatures;
 
 /**
  * Author: Martina Marek

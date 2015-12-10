@@ -1,8 +1,5 @@
 package tester;
 
-import dataReader.*;
-import classifier.*;
-import java.util.*;
 /**
  * Created by May on 12/1/15.
  */
@@ -12,7 +9,7 @@ public class TwitterTest {
 //        SplitData sp = new SplitData();
 //        sp.splitFile("data/twitter_data_labled.tsv");
 
-       ReadData reader = new ReadData();
+      /* ReadData reader = new ReadData();
         NGramClassifier classifier = new NGramClassifier();
         HashMap<String, ArrayList<String>> TrainingData;
 
@@ -42,7 +39,7 @@ public class TwitterTest {
         }
         System.out.println(sum/count);
 
-
+*/
 
 
 /*        TwitterNGramClassifier classifier = new TwitterNGramClassifier();

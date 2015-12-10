@@ -1,8 +1,11 @@
-package org.dataReader;
+package main.java.org.dataReader;
 
-import org.classifier.NGramClassifier;
+import main.java.org.classifier.*;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 

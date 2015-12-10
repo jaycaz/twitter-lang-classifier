@@ -1,6 +1,5 @@
-package org.classifier;
+package main.java.org.classifier;
 
-import org.dataReader.ReadData;
 import edu.stanford.nlp.classify.Dataset;
 import edu.stanford.nlp.classify.GeneralDataset;
 import edu.stanford.nlp.classify.SVMLightClassifier;
@@ -8,7 +7,8 @@ import edu.stanford.nlp.classify.SVMLightClassifierFactory;
 import edu.stanford.nlp.ling.RVFDatum;
 import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.stats.Counters;
-import org.util.Language;
+import main.java.org.dataReader.ReadData;
+import main.java.org.util.Language;
 
 import java.util.ArrayList;
 import java.util.HashMap;
