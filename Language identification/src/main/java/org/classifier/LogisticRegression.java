@@ -1,7 +1,4 @@
-package org.classifier;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+package main.java.org.classifier;
 
 import edu.stanford.nlp.classify.Dataset;
 import edu.stanford.nlp.classify.GeneralDataset;
@@ -10,7 +7,10 @@ import edu.stanford.nlp.classify.LinearClassifierFactory;
 import edu.stanford.nlp.ling.RVFDatum;
 import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.stats.Counters;
-import org.featureExtractor.NGramFeatures;
+import main.java.org.featureExtractor.NGramFeatures;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Author: Martina Marek

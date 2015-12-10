@@ -1,16 +1,15 @@
-package org.classifier;
+package main.java.org.classifier;
+
+import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.Counters;
+import edu.stanford.nlp.util.Pair;
+import main.java.org.util.*;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import edu.stanford.nlp.stats.ClassicCounter;
-import edu.stanford.nlp.stats.Counters;
-import edu.stanford.nlp.util.Pair;
-import org.apache.commons.lang.NotImplementedException;
-import org.util.Evaluator;
 
 /**
  * Author: Martina Marek
@@ -23,7 +22,8 @@ public abstract class Classifier {
 
 	public abstract String classify(String sentence);
 	public String classify(String sentence, boolean beamSearch, int beamSize) {
-		throw new NotImplementedException("method not overridden");
+		//throw new NotImplementedException("method not overridden");
+		return null;
 	};
 
 
